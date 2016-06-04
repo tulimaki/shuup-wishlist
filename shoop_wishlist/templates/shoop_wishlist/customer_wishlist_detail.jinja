@@ -1,0 +1,85 @@
+{% extends "shoop/front/base.jinja" %}
+
+{% block title -%}
+    {{ customer_wishlist.name }}
+{%- endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
+        <li><a href="{{ url("shoop:personal_wishlists") }}">{% trans %}Wishlists{% endtrans %}</a></li>
+        <li class="active">{{ customer_wishlist.name }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {{ customer_wishlist.name }}
+        <span class="pull-right">
+            <form id="delete-customer-wishlist"
+               method="post"
+               action="{{ url("shoop:delete_wishlist", pk=customer_wishlist.pk) }}">
+                {% csrf_token %}
+                <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i> {% trans %}Delete Wishlist{% endtrans %}
+                </button>
+            </form>
+        </span>
+    </h1>
+    {% if customer_wishlist.products.count() %}
+    <div class="well">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    {% for product in customer_wishlist.products.all() %}
+                        {% if shoop.product.is_visible(product) %}
+                        {% set thumbnail = product.primary_image|thumbnail(size=(200,200)) %}
+                        {%
+                                set product_url = url(
+                                    "shoop:product",
+                                    pk=product.pk,
+                                    slug=product.slug
+                                )
+                        %}
+                        {%
+                                set remove_product_url = url(
+                                    "shoop:remove_product_from_wishlist",
+                                    pk=customer_wishlist.pk,
+                                    product_pk=product.pk
+                                )
+                        %}
+                        <tr>
+                            <td class="wishlist-product-image">
+                                <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shoop_wishlist/img/no_image.png{% endif %}')"></div>
+                            </td>
+                            <td>{{ product.name }}</td>
+                            <td class="text-right">
+                                <div class="btn-vertical">
+                                    <a href="{{ product_url }}" class="btn btn-success">
+                                        <i class="fa fa-search"></i>
+                                        {% trans %}View Product{% endtrans %}
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                    <form method="POST"
+                                          action="{{ remove_product_url }}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                            {% trans %}Remove from Wishlist{% endtrans %}
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+        <p class="lead">
+            <i class="fa fa-info-circle text-info"></i> {{ _("You haven't added any items to your wishlist yet.") }}
+        </p>
+    {% endif %}
+{% endblock %}
