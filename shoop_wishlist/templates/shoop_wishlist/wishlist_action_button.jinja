@@ -1,0 +1,29 @@
+{% if request.customer %}
+<div class="btn-group dropdown-btn-block">
+    <div class="btn-container">
+        <button id="add-to-wishlist"
+                type="button"
+                data-product-id="{{ shop_product.id }}"
+                class="btn btn-success wishlist-btn btn-lg">
+            {% trans %}Add to wishlist{% endtrans %}
+        </button>
+    </div>
+    <button type="button" class="btn btn-success btn-lg wishlist-btn dropdown-toggle"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+    </button>
+    <ul id="add-to-wishlist-dropdown" class="dropdown-menu">
+        {%  if wishlists %}
+            {% for wishlist in wishlists %}
+                <li><a data-wishlist-id="{{ wishlist.id }}" href="#">{{ wishlist.name }}</a></li>
+            {% endfor %}
+            <li role="separator" class="divider"></li>
+        {% endif %}
+        <li id="create-wishlist-list-item">
+            <a id="create-wishlist" href="{{ url('shoop:create_wishlist') }}">
+            {% trans %}Create a wishlist{% endtrans %}
+            </a>
+        </li>
+    </ul>
+</div>
+{% endif %}

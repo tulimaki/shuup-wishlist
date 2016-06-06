@@ -1,0 +1,67 @@
+{% extends "shoop/front/base.jinja" %}
+
+{% block title -%}
+    {{ _("My Wishlists") }}
+{%- endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
+        <li class="active">{% trans %}My Wishlists{% endtrans %}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">
+        {{ _("My Wishlists") }}
+        <span class="pull-right">
+            <a id="create-customer-wishlist"
+               class="btn btn-success"
+               href="{{ url("shoop:create_wishlist") }}">
+                <i class="fa fa-plus"></i> {% trans %}New Wishlist{% endtrans %}
+            </a>
+        </span>
+    </h1>
+    <div class="well {% if not customer_wishlists %} hidden {% endif %}">
+        <div class="table-responsive">
+            <table id="customer-wishlists" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{{ _('Wishlist Name') }}</th>
+                        <th class="text-right">{{ _('Number of Items') }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for wishlist in customer_wishlists %}
+                        <tr>
+                            <td>{{ wishlist.name }}</td>
+                            <td class="text-right">{{ wishlist.product_count }}</td>
+                            <td class="text-right">
+                                <a href="{{ url("shoop:wishlist_detail", pk=wishlist.pk) }}">
+                                    <i class="fa fa-search"></i> {% trans %}Details{% endtrans %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if not customer_wishlists %}
+        <p id="no-wishlists-found" class="lead">
+            <i class="fa fa-info-circle text-info"></i> {% trans %}You haven't made any wishlists yet.{% endtrans %}
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+    <script>
+        $(document).ready(function(){
+            $('#create-customer-wishlist').click(function(e){
+                e.preventDefault();
+                ShoopWishlist.showCreateWishlistModal();
+            });
+        });
+    </script>
+{% endblock %}
