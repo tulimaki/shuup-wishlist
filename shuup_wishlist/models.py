@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# This file is part of Shoop Wishlist.
+# This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Ltd. All rights reserved.
+# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,8 +11,8 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from enumfields import Enum, EnumIntegerField
 
-from shoop.core.models import Contact, Product, Shop
-from shoop.core.models._base import ShoopModel
+from shuup.core.models import Contact, Product, Shop
+from shuup.core.models._base import ShuupModel
 
 
 class WishlistPrivacy(Enum):
@@ -26,7 +26,7 @@ class WishlistPrivacy(Enum):
         PRIVATE = _('private')
 
 
-class Wishlist(ShoopModel):
+class Wishlist(ShuupModel):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name=_('shop'))
     customer = models.ForeignKey(Contact, on_delete=models.CASCADE, verbose_name=_('customer'))
     name = models.CharField(verbose_name=_('name'), max_length=50)

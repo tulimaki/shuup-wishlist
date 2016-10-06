@@ -1,13 +1,13 @@
 /**
- * This file is part of Shoop Wishlist.
+ * This file is part of Shuup Wishlist.
  *
- * Copyright (c) 2012-2016, Shoop Ltd. All rights reserved.
+ * Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
  *
  * This source code is licensed under the AGPLv3 license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var ShoopWishlist = {
-    // something like this belongs in Shoop
+var ShuupWishlist = {
+    // something like this belongs in Shuup
     getCSRFToken: function(){
         var cookieValue = null;
         var name = 'csrftoken';

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# This file is part of Shoop Wishlist.
+# This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Ltd. All rights reserved.
+# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -15,14 +15,16 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.generic.list import ListView
 
-from shoop.core.models import Product
-from shoop_wishlist.models import Wishlist, WishlistPrivacy
+from shuup.core.models import Product
+
+from shuup_wishlist.forms import WishlistForm
+from shuup_wishlist.models import Wishlist, WishlistPrivacy
 
 
 class CustomerWishlistsView(ListView):
     model = Wishlist
     context_object_name = 'customer_wishlists'
-    template_name = 'shoop_wishlist/customer_wishlists.jinja'
+    template_name = 'shuup_wishlist/customer_wishlists.jinja'
 
     def get_queryset(self):
         qs = super(CustomerWishlistsView, self).get_queryset()
@@ -32,7 +34,7 @@ class CustomerWishlistsView(ListView):
 class CustomerWishlistDetailView(DetailView):
     model = Wishlist
     context_object_name = 'customer_wishlist'
-    template_name = 'shoop_wishlist/customer_wishlist_detail.jinja'
+    template_name = 'shuup_wishlist/customer_wishlist_detail.jinja'
 
     def get_queryset(self):
         qs = super(CustomerWishlistDetailView, self).get_queryset()
@@ -40,30 +42,9 @@ class CustomerWishlistDetailView(DetailView):
         return qs.prefetch_related('products').all()
 
 
-class WishlistForm(forms.ModelForm):
-    class Meta:
-        model = Wishlist
-        fields = ['name', 'privacy']
-
-    def __init__(self, *args, **kwargs):
-        self.shop = kwargs.pop('shop', None)
-        self.customer = kwargs.pop('customer', None)
-        self.product_id = kwargs.pop('product_id', None)
-        super(WishlistForm, self).__init__(*args, **kwargs)
-
-    def is_valid(self):
-        if self.product_id:
-            product = Product.objects.get(pk=self.product_id)
-            shop_product = product.get_shop_instance(self.shop)
-            errors = shop_product.get_visibility_errors(self.customer)
-            for error in errors:
-                self.add_error(None, error)
-        return super(WishlistForm, self).is_valid()
-
-
-class WishlistCreate(CreateView):
+class WishlistCreateView(CreateView):
     form_class = WishlistForm
-    template_name = 'shoop_wishlist/create_wishlist_modal.jinja'
+    template_name = 'shuup_wishlist/create_wishlist_modal.jinja'
 
     @transaction.atomic
     def form_valid(self, form):
@@ -91,14 +72,14 @@ class WishlistCreate(CreateView):
         return WishlistForm(**kwargs)
 
     def get_context_data(self, **kwargs):
-        data = super(WishlistCreate, self).get_context_data(**kwargs)
+        data = super(WishlistCreateView, self).get_context_data(**kwargs)
         data['product_id'] = self.request.GET.get('product_id')
         return data
 
 
-class WishlistDelete(DeleteView):
+class WishlistDeleteView(DeleteView):
     model = Wishlist
-    success_url = reverse_lazy('shoop:personal_wishlists')
+    success_url = reverse_lazy('shuup:personal_wishlists')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -109,14 +90,14 @@ class WishlistDelete(DeleteView):
             raise Http404
 
 
-class WishlistProductDelete(DeleteView):
+class WishlistProductDeleteView(DeleteView):
     model = Wishlist
 
     def delete(self, request, *args, **kwargs):
         wishlist = self.get_object()
         if wishlist.customer == request.customer:
             wishlist.products.remove(self.kwargs['product_pk'])
-            return HttpResponseRedirect(reverse_lazy('shoop:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
+            return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
         else:
             raise Http404
 

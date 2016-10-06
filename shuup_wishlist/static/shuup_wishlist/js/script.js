@@ -1,7 +1,7 @@
 /**
- * This file is part of Shoop Wishlist.
+ * This file is part of Shuup Wishlist.
  *
- * Copyright (c) 2012-2016, Shoop Ltd. All rights reserved.
+ * Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
  *
  * This source code is licensed under the AGPLv3 license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,7 +11,7 @@
     
     $('#create-wishlist').click(function(e){
         e.preventDefault();
-        ShoopWishlist.showCreateWishlistModal(productId);
+        ShuupWishlist.showCreateWishlistModal(productId);
     });
 
     $('#add-to-wishlist').click(function(e){
@@ -21,9 +21,9 @@
         var items = $('#add-to-wishlist-dropdown li a');
         if(items.length > 1){
             var wishlistId = $(items[0]).attr('data-wishlist-id');
-            ShoopWishlist.addProductToWishlist(wishlistId, productId);
+            ShuupWishlist.addProductToWishlist(wishlistId, productId);
         } else {
-            ShoopWishlist.showCreateWishlistModal(productId);
+            ShuupWishlist.showCreateWishlistModal(productId);
         }
     });
 
@@ -31,6 +31,6 @@
     $('#add-to-wishlist-dropdown').on('click', 'a', function(e){
         if($(this).attr('id') === 'create-wishlist') return;
         e.preventDefault();
-        ShoopWishlist.addProductToWishlist($(this).attr('data-wishlist-id'), productId);
+        ShuupWishlist.addProductToWishlist($(this).attr('data-wishlist-id'), productId);
     });
 }());
