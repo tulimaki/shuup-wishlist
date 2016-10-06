@@ -1,4 +1,4 @@
-{% extends "shoop/front/base.jinja" %}
+{% extends "shuup/front/base.jinja" %}
 
 {% block title -%}
     {{ _("My Wishlists") }}
@@ -17,7 +17,7 @@
         <span class="pull-right">
             <a id="create-customer-wishlist"
                class="btn btn-success"
-               href="{{ url("shoop:create_wishlist") }}">
+               href="{{ url("shuup:create_wishlist") }}">
                 <i class="fa fa-plus"></i> {% trans %}New Wishlist{% endtrans %}
             </a>
         </span>
@@ -38,7 +38,7 @@
                             <td>{{ wishlist.name }}</td>
                             <td class="text-right">{{ wishlist.product_count }}</td>
                             <td class="text-right">
-                                <a href="{{ url("shoop:wishlist_detail", pk=wishlist.pk) }}">
+                                <a href="{{ url("shuup:wishlist_detail", pk=wishlist.pk) }}">
                                     <i class="fa fa-search"></i> {% trans %}Details{% endtrans %}
                                 </a>
                             </td>
@@ -60,7 +60,7 @@
         $(document).ready(function(){
             $('#create-customer-wishlist').click(function(e){
                 e.preventDefault();
-                ShoopWishlist.showCreateWishlistModal();
+                ShuupWishlist.showCreateWishlistModal();
             });
         });
     </script>

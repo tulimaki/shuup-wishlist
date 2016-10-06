@@ -1,4 +1,4 @@
-{% extends "shoop/front/base.jinja" %}
+{% extends "shuup/front/base.jinja" %}
 
 {% block title -%}
     {{ customer_wishlist.name }}
@@ -7,7 +7,7 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
-        <li><a href="{{ url("shoop:personal_wishlists") }}">{% trans %}Wishlists{% endtrans %}</a></li>
+        <li><a href="{{ url("shuup:personal_wishlists") }}">{% trans %}Wishlists{% endtrans %}</a></li>
         <li class="active">{{ customer_wishlist.name }}</li>
     </ol>
 {% endblock %}
@@ -18,7 +18,7 @@
         <span class="pull-right">
             <form id="delete-customer-wishlist"
                method="post"
-               action="{{ url("shoop:delete_wishlist", pk=customer_wishlist.pk) }}">
+               action="{{ url("shuup:delete_wishlist", pk=customer_wishlist.pk) }}">
                 {% csrf_token %}
                 <button class="btn btn-danger">
                     <i class="fa fa-trash"></i> {% trans %}Delete Wishlist{% endtrans %}
@@ -32,25 +32,25 @@
             <table class="table">
                 <tbody>
                     {% for product in customer_wishlist.products.all() %}
-                        {% if shoop.product.is_visible(product) %}
+                        {% if product.is_visible(product) %}
                         {% set thumbnail = product.primary_image|thumbnail(size=(200,200)) %}
                         {%
                                 set product_url = url(
-                                    "shoop:product",
+                                    "shuup:product",
                                     pk=product.pk,
                                     slug=product.slug
                                 )
                         %}
                         {%
                                 set remove_product_url = url(
-                                    "shoop:remove_product_from_wishlist",
+                                    "shuup:remove_product_from_wishlist",
                                     pk=customer_wishlist.pk,
                                     product_pk=product.pk
                                 )
                         %}
                         <tr>
                             <td class="wishlist-product-image">
-                                <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shoop_wishlist/img/no_image.png{% endif %}')"></div>
+                                <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shuup_wishlist/img/no_image.png{% endif %}')"></div>
                             </td>
                             <td>{{ product.name }}</td>
                             <td class="text-right">

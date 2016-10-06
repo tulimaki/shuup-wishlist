@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# This file is part of Shoop Wishlist.
+# This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Ltd. All rights reserved.
+# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,12 +11,12 @@ import pytest
 from django.db.models import ObjectDoesNotExist
 from django.http import Http404
 
-from shoop.core.models import get_person_contact
-from shoop.testing.factories import get_default_product, get_default_shop
-from shoop.testing.utils import apply_request_middleware
-from shoop_tests.utils.fixtures import regular_user
-from shoop_wishlist.models import Wishlist, WishlistPrivacy
-from shoop_wishlist.views import (
+from shuup.core.models import get_person_contact
+from shuup.testing.factories import get_default_product, get_default_shop
+from shuup.testing.utils import apply_request_middleware
+from shuup_tests.utils.fixtures import regular_user
+from shuup_wishlist.models import Wishlist, WishlistPrivacy
+from shuup_wishlist.views import (
     add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
     WishlistCreate, WishlistDelete, WishlistProductDelete
 )

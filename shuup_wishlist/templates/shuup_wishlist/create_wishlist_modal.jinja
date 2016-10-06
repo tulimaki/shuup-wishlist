@@ -8,7 +8,7 @@
                 <h4 class="modal-title">{% trans %}Create Wishlist{% endtrans %}</h4>
             </div>
             <div class="modal-body">
-                <form id="create-wishlist-form" method="POST" action="{{ url('shoop:create_wishlist') }}">
+                <form id="create-wishlist-form" method="POST" action="{{ url('shuup:create_wishlist') }}">
                     <div class="alert alert-danger hidden"></div>
                     {% csrf_token %}
                     {% if product_id %}
@@ -63,7 +63,7 @@
             e.preventDefault();
             $errors.addClass('hidden');
             $(this).find('.form-group').removeClass('has-error');
-            ShoopWishlist.createWishlist($(this).serializeArray(), refreshView, handleErrors.bind(this));
+            ShuupWishlist.createWishlist($(this).serializeArray(), refreshView, handleErrors.bind(this));
         });
     }());
 </script>
