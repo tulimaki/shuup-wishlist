@@ -7,6 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 from __future__ import unicode_literals
 
+from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -27,7 +28,7 @@ def add_resources(context, content):
 
 class WishlistPlugin(TemplatedPlugin):
     identifier = "shuup_wishlist.wishlist_button"
-    name = _("Wishlist Plugin")
+    name = _("Wishlist Action Button")
     template_name = "shuup_wishlist/wishlist_action_button.jinja"
     required_context_variables = ['shop_product']
 
@@ -44,4 +45,31 @@ class WishlistPlugin(TemplatedPlugin):
             shop=context['request'].shop,
             customer=context['request'].customer
         )
+        return context
+
+
+class WishlistSmallButtonPlugin(TemplatedPlugin):
+    identifier = "shuup_wishlist.wishlist_small_button"
+    name = _("Wishlist Small Button")
+    template_name = "shuup_wishlist/buttons/small_button.jinja"
+    required_context_variables = ['shop_product']
+
+    fields = [
+        ("show_text", forms.BooleanField(
+            label=_("Show text next to icon"),
+            required=False,
+            initial=True,
+        )),
+    ]
+
+    def __init__(self, config):
+        super(WishlistSmallButtonPlugin, self).__init__(config)
+
+    def render(self, context):
+        add_resource(context, "body_end", "%sshuup_wishlist/js/script.js" % settings.STATIC_URL)
+        return super(WishlistSmallButtonPlugin, self).render(context)
+
+    def get_context_data(self, context):
+        context = super(WishlistSmallButtonPlugin, self).get_context_data(context)
+        context["show_text"] = self.config.get("show_text", True)
         return context

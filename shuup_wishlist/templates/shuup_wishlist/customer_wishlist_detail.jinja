@@ -1,8 +1,5 @@
-{% extends "shuup/front/base.jinja" %}
-
-{% block title -%}
-    {{ customer_wishlist.name }}
-{%- endblock %}
+{% extends "shuup/front/dashboard/dashboard.jinja" %}
+{% block title -%}{{ customer_wishlist.name }}{%- endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -12,19 +9,18 @@
     </ol>
 {% endblock %}
 
-{% block content %}
-    <h1 class="page-header">
-        {{ customer_wishlist.name }}
-        <span class="pull-right">
+{% block dashboard_content %}
+    <h1>{{ customer_wishlist.name }}
+        <div class="pull-right">
             <form id="delete-customer-wishlist"
                method="post"
                action="{{ url("shuup:delete_wishlist", pk=customer_wishlist.pk) }}">
                 {% csrf_token %}
-                <button class="btn btn-danger">
+                <button class="btn btn-primary">
                     <i class="fa fa-trash"></i> {% trans %}Delete Wishlist{% endtrans %}
                 </button>
             </form>
-        </span>
+        </div>
     </h1>
     {% if customer_wishlist.products.count() %}
     <div class="well">
@@ -32,30 +28,23 @@
             <table class="table">
                 <tbody>
                     {% for product in customer_wishlist.products.all() %}
-                        {% if product.is_visible(product) %}
+                        {% if product.get_shop_instance(request.shop).is_visible(request.customer) %}
                         {% set thumbnail = product.primary_image|thumbnail(size=(200,200)) %}
-                        {%
-                                set product_url = url(
-                                    "shuup:product",
-                                    pk=product.pk,
-                                    slug=product.slug
-                                )
-                        %}
-                        {%
-                                set remove_product_url = url(
-                                    "shuup:remove_product_from_wishlist",
-                                    pk=customer_wishlist.pk,
-                                    product_pk=product.pk
-                                )
-                        %}
+                        {% set product_url = url("shuup:product", pk=product.pk, slug=product.slug) %}
+                        {% set remove_product_url = url("shuup:remove_product_from_wishlist",
+                                                        pk=customer_wishlist.pk,
+                                                        product_pk=product.pk)%}
                         <tr>
                             <td class="wishlist-product-image">
                                 <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shuup_wishlist/img/no_image.png{% endif %}')"></div>
                             </td>
-                            <td>{{ product.name }}</td>
+                            <td>
+                                <h2>{{ product.name }}</h2>
+                                <p>{{ product.description }}</p>
+                            </td>
                             <td class="text-right">
                                 <div class="btn-vertical">
-                                    <a href="{{ product_url }}" class="btn btn-success">
+                                    <a href="{{ product_url }}" class="btn btn-primary">
                                         <i class="fa fa-search"></i>
                                         {% trans %}View Product{% endtrans %}
                                         <i class="fa fa-angle-double-right"></i>
@@ -63,9 +52,9 @@
                                     <form method="POST"
                                           action="{{ remove_product_url }}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="submit" class="btn btn-primary">
                                             <i class="fa fa-trash-o"></i>
-                                            {% trans %}Remove from Wishlist{% endtrans %}
+                                            {% trans %}Remove{% endtrans %}
                                         </button>
                                     </form>
                                 </div>

@@ -1,23 +1,8 @@
-{% extends "shuup/front/dashboard/dashboard.jinja" %}
+{% extends "shuup/front/dashboard/dashboard_base.jinja" %}
 
-{% block title -%}{{ _("My Wishlists") }}{%- endblock %}
-
-{% block breadcrumb %}
-    {% call macros.breadcrumb() %}
-        {{ macros.render_breadcrumb_item("/", _("Home")) }}
-        {{ macros.render_breadcrumb_item(url("shuup:dashboard"), _("Dashboard")) }}
-        {{ macros.render_breadcrumb_item(None, _("My Wishlists"), True) }}
-    {% endcall %}
-{% endblock %}
-
-{% block dashboard_content %}
-     <h1>{% trans %}My wishlists{% endtrans %}
-        <a class="btn btn-primary pull-right"
-           role="button"
-           href="{{ url("shuup:create_wishlist") }}">{% trans %}New Wishlist{% endtrans %}</a>
-    </h1>
-    <div class="well {% if not customer_wishlists %} hidden {% endif %}">
-        <div class="table-responsive">
+{% block dashboard_item_content %}
+    {% if wishlists %}
+         <div class="table-responsive">
             <table id="customer-wishlists" class="table table-striped">
                 <thead>
                     <tr>
@@ -27,7 +12,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for wishlist in customer_wishlists %}
+                    {% for wishlist in wishlists %}
                         <tr>
                             <td>{{ wishlist.name }}</td>
                             <td class="text-right">{{ wishlist.product_count }}</td>
@@ -41,21 +26,9 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    {% if not customer_wishlists %}
+    {% else %}
         <p id="no-wishlists-found" class="lead">
             <i class="fa fa-info-circle text-info"></i> {% trans %}You haven't made any wishlists yet.{% endtrans %}
         </p>
     {% endif %}
-{% endblock %}
-
-{% block extrajs %}
-    <script>
-        $(document).ready(function(){
-            $('#create-customer-wishlist').click(function(e){
-                e.preventDefault();
-                ShuupWishlist.showCreateWishlistModal();
-            });
-        });
-    </script>
 {% endblock %}

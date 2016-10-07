@@ -18,6 +18,8 @@ INSTALLED_APPS = (
     "filer",
     "shuup.core",
     "shuup.front",
+    "shuup.testing",
+    "shuup.campaigns",
     "shuup.customer_group_pricing",
     "shuup.default_tax",
     "shuup.simple_cms",
@@ -76,4 +78,17 @@ TEMPLATES = [
         },
         "NAME": "jinja2",
     },
+]
+
+MIDDLEWARE_CLASSES = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shuup.front.middleware.ProblemMiddleware',
+    'shuup.front.middleware.ShuupFrontMiddleware',
 ]
