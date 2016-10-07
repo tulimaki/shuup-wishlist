@@ -1,0 +1,9 @@
+<div>
+    <a type="button"
+       data-product-id="{{ shop_product.id }}"
+       href="#"
+       class="add-to-wishlist"
+       title="{% trans %}Add to wishlist{% endtrans %}">
+        <i class="fa fa-heart"></i>{% if show_text %} {% trans %}Add to wishlist{% endtrans %}{% endif %}
+    </a>
+</div>

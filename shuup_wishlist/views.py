@@ -5,23 +5,23 @@
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
-from django import forms
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.db import transaction
 from django.db.models import Count, Q
 from django.http import Http404
 from django.http.response import HttpResponseRedirect, JsonResponse
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.generic.list import ListView
 
-from shuup.core.models import Product
-
+from shuup.front.views.dashboard import DashboardViewMixin
 from shuup_wishlist.forms import WishlistForm
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 
 
-class CustomerWishlistsView(ListView):
+class CustomerWishlistsView(DashboardViewMixin, ListView):
     model = Wishlist
     context_object_name = 'customer_wishlists'
     template_name = 'shuup_wishlist/customer_wishlists.jinja'
@@ -31,7 +31,7 @@ class CustomerWishlistsView(ListView):
         return qs.filter(customer=self.request.customer).annotate(product_count=Count('products'))
 
 
-class CustomerWishlistDetailView(DetailView):
+class CustomerWishlistDetailView(DashboardViewMixin, DetailView):
     model = Wishlist
     context_object_name = 'customer_wishlist'
     template_name = 'shuup_wishlist/customer_wishlist_detail.jinja'
@@ -97,6 +97,7 @@ class WishlistProductDeleteView(DeleteView):
         wishlist = self.get_object()
         if wishlist.customer == request.customer:
             wishlist.products.remove(self.kwargs['product_pk'])
+            messages.success(request, _("Product removed from wishlist."))
             return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
         else:
             raise Http404
