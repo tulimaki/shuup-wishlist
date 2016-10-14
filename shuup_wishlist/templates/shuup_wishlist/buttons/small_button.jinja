@@ -1,8 +1,10 @@
+{% set wishlist_url = url("shuup:login") if request.customer.is_anonymous else "" %}
 <div>
     <a type="button"
        data-product-id="{{ shop_product.id }}"
        href="#"
        class="add-to-wishlist"
+       data-url-override="{{ wishlist_url }}"
        title="{% trans %}Add to wishlist{% endtrans %}">
         <i class="fa fa-heart"></i>{% if show_text %} {% trans %}Add to wishlist{% endtrans %}{% endif %}
     </a>

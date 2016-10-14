@@ -21,9 +21,12 @@ except:
 
 
 def add_resources(context, content):
+    if context["request"].resolver_match.app_name == "shuup_admin":
+        return
     add_resource(context, "head_end", "%sshuup_wishlist/css/style.css" % settings.STATIC_URL)
     add_resource(context, "body_end", "%sshuup_wishlist/js/lib.js" % settings.STATIC_URL)
     add_resource(context, "body_end", "%sshuup_wishlist/js/flash_message.js" % settings.STATIC_URL)
+    add_resource(context, "body_end", "%sshuup_wishlist/js/script.js" % settings.STATIC_URL)
 
 
 class WishlistPlugin(TemplatedPlugin):
@@ -36,7 +39,6 @@ class WishlistPlugin(TemplatedPlugin):
         super(WishlistPlugin, self).__init__(config)
 
     def render(self, context):
-        add_resource(context, "body_end", "%sshuup_wishlist/js/script.js" % settings.STATIC_URL)
         return super(WishlistPlugin, self).render(context)
 
     def get_context_data(self, context):
@@ -66,7 +68,6 @@ class WishlistSmallButtonPlugin(TemplatedPlugin):
         super(WishlistSmallButtonPlugin, self).__init__(config)
 
     def render(self, context):
-        add_resource(context, "body_end", "%sshuup_wishlist/js/script.js" % settings.STATIC_URL)
         return super(WishlistSmallButtonPlugin, self).render(context)
 
     def get_context_data(self, context):
