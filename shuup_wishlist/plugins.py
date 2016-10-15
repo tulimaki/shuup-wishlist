@@ -21,8 +21,11 @@ except:
 
 
 def add_resources(context, content):
-    if context["request"].resolver_match.app_name == "shuup_admin":
-        return
+    request = context.get("request")
+    if request:
+        match = request.resolver_match
+        if match and match.app_name == "shuup_admin":
+            return
     add_resource(context, "head_end", "%sshuup_wishlist/css/style.css" % settings.STATIC_URL)
     add_resource(context, "body_end", "%sshuup_wishlist/js/lib.js" % settings.STATIC_URL)
     add_resource(context, "body_end", "%sshuup_wishlist/js/flash_message.js" % settings.STATIC_URL)
