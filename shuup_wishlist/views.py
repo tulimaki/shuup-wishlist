@@ -57,6 +57,7 @@ class WishlistCreateView(CreateView):
         response['name'] = wishlist.name
         if created and product_id:
             wishlist.products.add(product_id)
+            response["product_id"] = product_id
             response['product_name'] = wishlist.products.get(pk=product_id).name
         response['created'] = created
         return JsonResponse(response)
@@ -105,21 +106,24 @@ class WishlistProductDeleteView(DeleteView):
 
 def add_product_to_wishlist(request, wishlist_id, product_id):
     response = {'created': False}
-
     if request.method != 'POST':
         return JsonResponse({'err': 'invalid request'}, status=405)
 
     if not getattr(request, 'customer', None):
         return JsonResponse({'err': 'unauthorized request'}, status=403)
 
-    # ensure wishlist belongs to currently logged in user
-    wishlist = Wishlist.objects.filter(customer=request.customer, id=wishlist_id).first()
+    if wishlist_id != 'default':
+        wishlist = Wishlist.objects.filter(customer=request.customer, id=int(wishlist_id)).first()
+    else:
+        wishlist = Wishlist.objects.filter(customer=request.customer, shop=request.shop).first()
     if wishlist:
         created = not wishlist.products.filter(id=product_id).exists()
         response['created'] = created
         if created:
             wishlist.products.add(product_id)
         response['product_name'] = wishlist.products.get(id=product_id).name
+    elif wishlist_id == 'default':
+        return JsonResponse({'err': 'no wishlists exist'}, status=200)
     else:
         return JsonResponse({'err': 'invalid wishlist'}, status=400)
     return JsonResponse(response)

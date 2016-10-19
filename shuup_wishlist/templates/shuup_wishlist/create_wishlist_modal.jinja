@@ -29,8 +29,8 @@
 
         function refreshView(wishlist){
             if(wishlist.product_name){
-                var $wishlistLink = $('<li><a data-wishlist-id="' + wishlist.id + '">' + wishlist.name + '</a></li>');
-                var $pos = $('#add-to-wishlist-dropdown .divider');
+                var $wishlistLink = $('<li><a data-wishlist-id="' + wishlist.id + '" data-product-id="' + wishlist.product_id + '">' + wishlist.name + '</a></li>');
+                var $pos = $('.add-to-wishlist-dropdown .divider');
                 if($pos.length > 0){
                     $wishlistLink.insertBefore($pos);
                 } else {
