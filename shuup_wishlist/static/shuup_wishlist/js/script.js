@@ -17,7 +17,7 @@ $(document).ready(function() {
     $('.add-to-wishlist').click(function(e){
         e.preventDefault();
         var urlOverride = $(this).data("url-override");
-        if (urlOverride !== null && urlOverride.length) {
+        if (urlOverride && urlOverride !== null && urlOverride.length) {
             window.location = urlOverride;
             return;
         }
@@ -30,13 +30,13 @@ $(document).ready(function() {
             ShuupWishlist.addProductToWishlist(wishlistId, productId);
         }
         else {
-            ShuupWishlist.showCreateWishlistModal(productId);
+            ShuupWishlist.addProductToWishlist(null, productId);
         }
     });
 
     // need to use delegated event since items can be added to list dynamically
     $('.add-to-wishlist-dropdown').on('click', 'a', function(e) {
-        if($(this).attr('id') === 'create-wishlist') return;
+        if($(this).hasClass('create-wishlist')) return;
         e.preventDefault();
         var productId = $(this).data("product-id");
         ShuupWishlist.addProductToWishlist($(this).attr('data-wishlist-id'), productId);

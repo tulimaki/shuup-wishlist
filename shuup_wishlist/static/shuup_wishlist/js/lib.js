@@ -27,7 +27,7 @@ var ShuupWishlist = {
     showCreateWishlistModal: function(productId){
         var data = {};
         if(typeof productId !== 'undefined') data.product_id = productId;
-        
+
         $.ajax({
             url: '/wishlist/create',
             method: 'GET',
@@ -40,7 +40,7 @@ var ShuupWishlist = {
                 }
                 $container.html(create_wishlist_html).find('#create-wishlist-modal').modal({show: true});
             }
-        });      
+        });
     },
     createWishlist: function(wishlist, successCb, errorCb){
         $.ajax({
@@ -70,9 +70,12 @@ var ShuupWishlist = {
             error: function(err){
                 errorCb(err.responseJSON);
             }
-        });        
+        });
     },
     addProductToWishlist: function(wishlistId, productId){
+        if(wishlistId == null) {
+            wishlistId = 'default';
+        }
         $.ajax({
             url: '/wishlist/' + wishlistId + '/product/' + productId + '/',
             method: 'POST',
@@ -85,12 +88,17 @@ var ShuupWishlist = {
                     msg = interpolate(gettext('%s added to wishlist!'), [response.product_name]);
                     flashMessage('alert-success', 'glyphicon-ok', msg);
                 } else if(response.err){
-                    flashMessage('alert-danger', '', response.err);
+                    ShuupWishlist.showCreateWishlistModal(productId);
                 } else {
                     msg = interpolate(gettext('%s is already in wishlist!'), [response.product_name]);
                     flashMessage('alert-danger', '', msg);
                 }
+            },
+            error: function(err) {
+                if(err && err.responseJSON && err.responseJSON.err) {
+                    flashMessage('alert-danger', '', err.responseJSON.err);
+                }
             }
-        });        
+        });
     }
 };

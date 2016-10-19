@@ -18,7 +18,7 @@ urlpatterns = patterns(
     url(r"^wishlist/(?P<pk>\d+)/$", CustomerWishlistDetailView.as_view(), name="wishlist_detail"),
     url(r"^wishlist/create/$", WishlistCreateView.as_view(), name="create_wishlist"),
     url(r"^wishlist/(?P<pk>\d+)/delete/$", WishlistDeleteView.as_view(), name="delete_wishlist"),
-    url(r"^wishlist/(?P<wishlist_id>\d+)/product/(?P<product_id>\d+)/$",
+    url(r"^wishlist/(?P<wishlist_id>\w+)/product/(?P<product_id>\d+)/$",
         add_product_to_wishlist, name="add_product_to_wishlist"),
     url(r"^wishlist/(?P<pk>\d+)/product/(?P<product_pk>\d+)/remove/$",
         WishlistProductDeleteView.as_view(), name="remove_product_from_wishlist"),
