@@ -38,12 +38,6 @@ class WishlistPlugin(TemplatedPlugin):
     template_name = "shuup_wishlist/wishlist_action_button.jinja"
     required_context_variables = ['shop_product']
 
-    def __init__(self, config):
-        super(WishlistPlugin, self).__init__(config)
-
-    def render(self, context):
-        return super(WishlistPlugin, self).render(context)
-
     def get_context_data(self, context):
         context = super(WishlistPlugin, self).get_context_data(context)
         context["wishlists"] = Wishlist.objects.filter(
@@ -66,12 +60,6 @@ class WishlistSmallButtonPlugin(TemplatedPlugin):
             initial=True,
         )),
     ]
-
-    def __init__(self, config):
-        super(WishlistSmallButtonPlugin, self).__init__(config)
-
-    def render(self, context):
-        return super(WishlistSmallButtonPlugin, self).render(context)
 
     def get_context_data(self, context):
         context = super(WishlistSmallButtonPlugin, self).get_context_data(context)

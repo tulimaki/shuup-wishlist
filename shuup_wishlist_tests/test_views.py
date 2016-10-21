@@ -18,7 +18,8 @@ from shuup_tests.utils.fixtures import regular_user
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 from shuup_wishlist.views import (
     add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
-    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView
+    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView,
+    WishlistSearchView
 )
 
 regular_user = regular_user  # noqa
@@ -109,7 +110,7 @@ def test_wishlist_create_get_context_data(admin_user, rf):
 
 @pytest.mark.django_db
 def test_add_product_to_wishlist_invalid_method(rf):
-    shop = get_default_shop()
+    get_default_shop()
     request = apply_request_middleware(rf.get("/"))
     response = add_product_to_wishlist(request, 0, 0)
 
@@ -186,6 +187,7 @@ def test_view_own_wishlist_detail(rf, regular_user):
 
     assert response.status_code == 200
     assert 'customer_wishlist' in response.context_data
+    assert response.context_data["is_owner"]
     assert response.context_data['customer_wishlist'].name == wishlist.name
     assert response.context_data['customer_wishlist'].products.count() == 1
 
@@ -206,6 +208,7 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
 
     assert response.status_code == 200
     assert 'customer_wishlist' in response.context_data
+    assert not response.context_data["is_owner"]
     assert response.context_data['customer_wishlist'].name == wishlist.name
     assert response.context_data['customer_wishlist'].products.count() == 1
 
@@ -296,3 +299,22 @@ def test_delete_other_persons_wishlist_product(rf, admin_user, regular_user):
     with pytest.raises(Http404):
         view_func(request, pk=wishlist.pk, product_pk=product.pk)
     assert Wishlist.objects.get(pk=wishlist.pk).products.filter(pk=product.pk).exists()
+
+
+@pytest.mark.django_db
+def test_wishlist_search(rf, admin_user, regular_user):
+    shop = get_default_shop()
+    admin_person = get_person_contact(admin_user)
+    person = get_person_contact(regular_user)
+
+    Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
+    Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.SHARED)
+    Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PRIVATE)
+
+    view_func = WishlistSearchView.as_view()
+
+    request = apply_request_middleware(rf.get("/?q=foo"), customer=person)
+    response = view_func(request)
+
+    assert response.status_code == 200
+    assert len(response.context_data["wishlists"]) == 1

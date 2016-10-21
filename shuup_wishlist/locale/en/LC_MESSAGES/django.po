@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-07 02:39+0000\n"
+"POT-Creation-Date: 2016-10-21 19:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,25 +80,22 @@ msgstr ""
 msgid "Delete Wishlist"
 msgstr ""
 
+msgid "Share: "
+msgstr ""
+
+msgid "Check out my wishlist"
+msgstr ""
+
 msgid "View Product"
 msgstr ""
 
 msgid "Remove"
 msgstr ""
 
-msgid "You haven't added any items to your wishlist yet."
-msgstr ""
-
-msgid "My Wishlists"
+msgid "No products found."
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
-
-msgid "My wishlists"
-msgstr ""
-
-msgid "New Wishlist"
 msgstr ""
 
 msgid "Wishlist Name"
@@ -111,6 +108,21 @@ msgid "Details"
 msgstr ""
 
 msgid "You haven't made any wishlists yet."
+msgstr ""
+
+msgid "New Wishlist"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Search public wishlists by name or customer name/email"
+msgstr ""
+
+msgid "Customer"
+msgstr ""
+
+msgid "No wishlists found."
 msgstr ""
 
 msgid "Create a wishlist"
