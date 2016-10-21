@@ -31,6 +31,21 @@ class CustomerWishlistsView(DashboardViewMixin, ListView):
         return qs.filter(customer=self.request.customer).annotate(product_count=Count('products'))
 
 
+class WishlistSearchView(DashboardViewMixin, ListView):
+    model = Wishlist
+    context_object_name = 'wishlists'
+    template_name = 'shuup_wishlist/public_wishlists.jinja'
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = super(WishlistSearchView, self).get_queryset()
+        qs = qs.filter(privacy=WishlistPrivacy.PUBLIC).annotate(product_count=Count('products'))
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(Q(customer__name__icontains=q) | Q(customer__email__icontains=q) | Q(name__icontains=q))
+        return qs.prefetch_related('customer')
+
+
 class CustomerWishlistDetailView(DashboardViewMixin, DetailView):
     model = Wishlist
     context_object_name = 'customer_wishlist'
@@ -38,8 +53,15 @@ class CustomerWishlistDetailView(DashboardViewMixin, DetailView):
 
     def get_queryset(self):
         qs = super(CustomerWishlistDetailView, self).get_queryset()
-        qs = qs.filter(Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED))
+        qs = qs.filter(
+            Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) | Q(privacy=WishlistPrivacy.PUBLIC))
         return qs.prefetch_related('products').all()
+
+    def get_context_data(self, **kwargs):
+        data = super(CustomerWishlistDetailView, self).get_context_data(**kwargs)
+        wishlist = data["customer_wishlist"]
+        data['is_owner'] = wishlist.customer == self.request.customer
+        return data
 
 
 class WishlistCreateView(CreateView):

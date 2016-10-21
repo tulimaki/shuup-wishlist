@@ -9,12 +9,14 @@ from django.conf.urls import patterns, url
 
 from .views import (
     add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
-    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView
+    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView,
+    WishlistSearchView
 )
 
 urlpatterns = patterns(
     '',
     url(r"wishlists/$", CustomerWishlistsView.as_view(), name="personal_wishlists"),
+    url(r"wishlists/search/$", WishlistSearchView.as_view(), name="search_wishlists"),
     url(r"^wishlist/(?P<pk>\d+)/$", CustomerWishlistDetailView.as_view(), name="wishlist_detail"),
     url(r"^wishlist/create/$", WishlistCreateView.as_view(), name="create_wishlist"),
     url(r"^wishlist/(?P<pk>\d+)/delete/$", WishlistDeleteView.as_view(), name="delete_wishlist"),

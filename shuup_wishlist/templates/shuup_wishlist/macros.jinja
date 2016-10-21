@@ -1,0 +1,56 @@
+{% macro render_wishlists_page(wishlists, show_customer_name=False) %}
+    <h1>{% trans %}Wishlists{% endtrans %}
+       <a id="create-customer-wishlist"
+          class="btn btn-primary pull-right"
+          role="button"
+          href="{{ url("shuup:create_wishlist") }}">{% trans %}New Wishlist{% endtrans %}</a>
+    </h1>
+    <br>
+    <div class="row">
+       <div class="col-md-12">
+           <form method="get" action="{{ url("shuup:search_wishlists") }}">
+               <div class="form-group">
+                   <label for="search">{% trans %}Search{% endtrans %}: </label>
+                   <input
+                       class="form-control"
+                       type="text"
+                       name="q"
+                       placeholder="{% trans %}Search public wishlists by name or customer name/email{% endtrans %}">
+               </div>
+           </form>
+       </div>
+    </div>
+    <div class="well {% if not wishlists %} hidden {% endif %}">
+       <div class="table-responsive">
+           <table id="customer-wishlists" class="table table-striped">
+               <thead>
+                   <tr>
+                       <th>{{ _('Wishlist Name') }}</th>
+                       {% if show_customer_name %}<th>{{ _('Customer') }}</th>{% endif %}
+                       <th class="text-right">{{ _('Number of Items') }}</th>
+                       <th></th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {% for wishlist in wishlists %}
+                       <tr>
+                           <td>{{ wishlist.name }}</td>
+                           {% if show_customer_name %}<td>{{ wishlist.customer.name }}</td>{% endif %}
+                           <td class="text-right">{{ wishlist.product_count }}</td>
+                           <td class="text-right">
+                               <a href="{{ url("shuup:wishlist_detail", pk=wishlist.pk) }}">
+                                   <i class="fa fa-search"></i> {% trans %}Details{% endtrans %}
+                               </a>
+                           </td>
+                       </tr>
+                   {% endfor %}
+               </tbody>
+           </table>
+       </div>
+    </div>
+    {% if not wishlists %}
+       <p id="no-wishlists-found" class="lead">
+           <i class="fa fa-info-circle text-info"></i> {% trans %}No wishlists found.{% endtrans %}
+       </p>
+    {% endif %}
+{% endmacro %}
