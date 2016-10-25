@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-10-25 21:24+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Wishlists"
+msgstr "Toivelistat"
+
+msgid "Show all"
+msgstr "Näytä kaikki"
+
+msgid "public"
+msgstr "julkinen"
+
+msgid "shared"
+msgstr "jaettu"
+
+msgid "private"
+msgstr "yksityinen"
+
+msgid "shop"
+msgstr "kauppa"
+
+msgid "customer"
+msgstr "asiakas"
+
+msgid "name"
+msgstr "nimi"
+
+msgid "privacy"
+msgstr "yksityisyys"
+
+msgid "created on"
+msgstr "luotu"
+
+msgid "products"
+msgstr "tuotteet"
+
+msgid "Wishlist"
+msgstr "Toivelista"
+
+msgid "Wishlist Action Button"
+msgstr "Toivelista painike"
+
+msgid "Wishlist Small Button"
+msgstr "Toivelista pieni painike"
+
+msgid "Show text next to icon"
+msgstr "Näytä teksti ikonin vieressä"
+
+msgid "Add to wishlist"
+msgstr "Lisää toivelistalle"
+
+msgid "Create Wishlist"
+msgstr "Luo toivelista"
+
+msgid "Create"
+msgstr "Luo"
+
+msgid "Cancel"
+msgstr "Peru"
+
+msgid "Home"
+msgstr "Koti"
+
+msgid "Delete Wishlist"
+msgstr "Poista toivelista"
+
+msgid "Share: "
+msgstr "Jaa: "
+
+msgid "Check out my wishlist"
+msgstr "Vilkaise toivelistaani"
+
+msgid "View Product"
+msgstr "Näytä Tuote"
+
+msgid "Remove"
+msgstr "Poista"
+
+msgid "No products found."
+msgstr "Ei tuotteita."
+
+msgid "Dashboard"
+msgstr "Kojelauta"
+
+msgid "Wishlist Name"
+msgstr "Toivelistan nimi"
+
+msgid "Number of Items"
+msgstr "Tuotteiden määrä"
+
+msgid "Details"
+msgstr "Tiedot"
+
+msgid "You haven't made any wishlists yet."
+msgstr "Sinulla ei ole vielä toivelistaa."
+
+msgid "New Wishlist"
+msgstr "Uusi toivelista"
+
+msgid "Search"
+msgstr "Haku"
+
+msgid "Search public wishlists by name or customer name/email"
+msgstr "Hae toivelistaa nimellä, asiakkaan nimellä tai sähköpostilla"
+
+msgid "Customer"
+msgstr "Asiakas"
+
+msgid "No wishlists found."
+msgstr "Toivelistoja ei löytynyt."
+
+msgid "Create a wishlist"
+msgstr "Luo toivelista"
+
+msgid "Product removed from wishlist."
+msgstr "Tuote poistettu toivelistalta."
