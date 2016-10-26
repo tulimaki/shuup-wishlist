@@ -7,10 +7,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 $(document).ready(function() {
+    function getProductIdToAdd(el) {
+        var elProductId = $(el).attr('data-product-id');
+        var productId = null;
+        var addToCartButton = $("#add-to-cart-button-" + elProductId);
+        $.each(addToCartButton.closest("form.add-to-basket").serializeArray(), function(i, fd) {
+            if(fd.name === "product_id") productId = fd.value;
+        });
+        return (productId ? productId : elProductId);
+    }
 
     $('.create-wishlist').click(function(e) {
         e.preventDefault();
-        var productId = $(this).attr('data-product-id');
+        var productId = getProductIdToAdd(this);
         ShuupWishlist.showCreateWishlistModal(productId);
     });
 
@@ -23,7 +32,7 @@ $(document).ready(function() {
         }
         // if we have wishlists, add the item to the first one
         // otherwise show the create wishlist modal
-        var productId = $(this).attr('data-product-id');
+        var productId = getProductIdToAdd(this);
         var items = $('.add-to-wishlist-dropdown li a');
         if(items.length > 1){
             var wishlistId = $(items[0]).attr('data-wishlist-id');
@@ -38,7 +47,7 @@ $(document).ready(function() {
     $('.add-to-wishlist-dropdown').on('click', 'a', function(e) {
         if($(this).hasClass('create-wishlist')) return;
         e.preventDefault();
-        var productId = $(this).data("product-id");
+        var productId = getProductIdToAdd(this);
         ShuupWishlist.addProductToWishlist($(this).attr('data-wishlist-id'), productId);
     });
 });
