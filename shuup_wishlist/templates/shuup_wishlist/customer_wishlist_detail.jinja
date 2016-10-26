@@ -51,7 +51,11 @@
             <tbody>
                 {% for product in customer_wishlist.products.all() %}
                     {% if product.get_shop_instance(request.shop).is_visible(request.customer) %}
-                    {% set thumbnail = product.primary_image|thumbnail(size=(200,200)) %}
+                    {% set image = product.primary_image %}
+                    {% if not image and product.variation_parent %}
+                        {% set image = product.variation_parent.primary_image %}
+                    {% endif %}
+                    {% set thumbnail = image|thumbnail(size=(200,200), crop="smart", upscale=True) %}
                     {% set product_url = url("shuup:product", pk=product.pk, slug=product.slug) %}
                     {% set remove_product_url = url("shuup:remove_product_from_wishlist",
                                                     pk=customer_wishlist.pk,
