@@ -1,3 +1,8 @@
+.. image:: https://travis-ci.org/shuup/shuup-wishlist.svg?branch=master
+    :target: https://travis-ci.org/shuup/shuup-wishlist
+.. image:: https://coveralls.io/repos/github/shuup/shuup-wishlist/badge.svg?branch=master
+    :target: https://coveralls.io/github/shuup/shuup-wishlist?branch=master
+
 Shuup Wishlist
 ==============
 
