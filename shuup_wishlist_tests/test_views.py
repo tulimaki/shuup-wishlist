@@ -14,13 +14,13 @@ from django.http import Http404
 from shuup.core.models import get_person_contact
 from shuup.testing.factories import get_default_product, get_default_shop
 from shuup.testing.utils import apply_request_middleware
-from shuup_tests.utils.fixtures import regular_user
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 from shuup_wishlist.views import (
     add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
     WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView,
     WishlistSearchView
 )
+from .fixtures import regular_user
 
 regular_user = regular_user  # noqa
 
