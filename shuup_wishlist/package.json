@@ -1,0 +1,19 @@
+{
+  "name": "shuup-wishlist",
+  "version": "0.3.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm i && gulp"
+  },
+  "author": "",
+  "license": "Proprietary",
+  "private": true,
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-uglify": "^1.4.0",
+    "gulp-util": "^3.0.6"
+  }
+}

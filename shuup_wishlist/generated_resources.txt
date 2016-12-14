@@ -1,0 +1,1 @@
+static/shuup_wishlist/js/scripts.js
