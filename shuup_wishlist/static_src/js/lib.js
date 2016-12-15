@@ -56,7 +56,7 @@ var ShuupWishlist = {
                         msg = interpolate(gettext('%s added to wishlist!'), [response.product_name]);
                         flashMessage('alert-success', 'glyphicon-ok', msg);
                     } else {
-                        msg = gettext('wishlist created!');
+                        msg = gettext('Wishlist created!');
                         flashMessage('alert-success', 'glyphicon-ok', msg);
                     }
                 } else {
