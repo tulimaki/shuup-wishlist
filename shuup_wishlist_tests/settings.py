@@ -18,6 +18,7 @@ INSTALLED_APPS = (
     "filer",
     "shuup.core",
     "shuup.front",
+    "shuup.admin",
     "shuup.testing",
     "shuup.campaigns",
     "shuup.customer_group_pricing",
@@ -25,6 +26,7 @@ INSTALLED_APPS = (
     "shuup.simple_cms",
     "shuup.xtheme",
     "shuup_wishlist",
+    "bootstrap3",  # shuup.admin requirement
 )
 
 DATABASES = {
