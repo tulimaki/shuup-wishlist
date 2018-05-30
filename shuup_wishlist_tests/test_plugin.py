@@ -20,7 +20,7 @@ def test_wishlist_plugin_get_context(rf, admin_user):
     person = get_person_contact(admin_user)
     product = get_default_shop_product()
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    request = apply_request_middleware(rf.get("/"), shop=shop, customer=person, shop_product=product)
+    request = apply_request_middleware(rf.get("/"), shop=shop, user=person.user, shop_product=product)
     plugin = WishlistPlugin({})
     context = plugin.get_context_data({'request': request})
 

@@ -6,8 +6,11 @@
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
-from shuup.core.models import Product
+from shuup.core.models import Product, ShopProduct
+from shuup.utils.djangoenv import has_installed
 from shuup_wishlist.models import Wishlist
 
 
@@ -25,8 +28,17 @@ class WishlistForm(forms.ModelForm):
     def is_valid(self):
         if self.product_id:
             product = Product.objects.get(pk=self.product_id)
-            shop_product = product.get_shop_instance(self.shop)
-            errors = shop_product.get_visibility_errors(self.customer)
+            try:
+                shop_product = product.get_shop_instance(self.shop)
+            except ShopProduct.DoesNotExist as e:
+                errors = [
+                    ValidationError(_('Unknown error.'), code="unknown_error")
+                ]
+                if has_installed("raven.contrib.django.raven_compat"):
+                    from raven.contrib.django.raven_compat.models import client
+                    client.captureException()
+            else:
+                errors = shop_product.get_visibility_errors(self.customer)
             for error in errors:
                 self.add_error(None, error)
         return super(WishlistForm, self).is_valid()

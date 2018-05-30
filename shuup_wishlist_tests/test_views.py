@@ -30,7 +30,7 @@ def test_wishlist_create_invalid(admin_user, rf):
     shop = get_default_shop()
     person = get_person_contact(admin_user)
     view_func = WishlistCreateView.as_view()
-    request = apply_request_middleware(rf.post("/"), shop=shop, customer=person)
+    request = apply_request_middleware(rf.post("/"), shop=shop, user=person.user)
     response = view_func(request)
 
     assert response.status_code == 400
@@ -42,7 +42,7 @@ def test_wishlist_create(admin_user, rf):
     person = get_person_contact(admin_user)
     view_func = WishlistCreateView.as_view()
     request = rf.post("/", {"name": "foo", "privacy": 0})
-    request = apply_request_middleware(request, shop=shop, customer=person)
+    request = apply_request_middleware(request, shop=shop, user=person.user)
     response = view_func(request)
     data = json.loads(response.content.decode("utf-8"))
     wishlists = Wishlist.objects.filter(shop=shop, customer=person).all()
@@ -65,7 +65,7 @@ def test_wishlist_create_with_product(admin_user, rf):
     product = get_default_product()
     view_func = WishlistCreateView.as_view()
     request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": product.id})
-    request = apply_request_middleware(request, shop=shop, customer=person)
+    request = apply_request_middleware(request, shop=shop, user=person.user)
     response = view_func(request)
     data = json.loads(response.content.decode("utf-8"))
     wishlists = Wishlist.objects.filter(shop=shop, customer=person).all()
@@ -89,7 +89,7 @@ def test_wishlist_create_with_deleted_product(admin_user, rf):
     product.soft_delete(admin_user)
     view_func = WishlistCreateView.as_view()
     request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": product.id})
-    request = apply_request_middleware(request, shop=shop, customer=person)
+    request = apply_request_middleware(request, shop=shop, user=person.user)
     response = view_func(request)
 
     assert response.status_code == 400
@@ -100,7 +100,7 @@ def test_wishlist_create_get_context_data(admin_user, rf):
     shop = get_default_shop()
     person = get_person_contact(admin_user)
     view_func = WishlistCreateView.as_view()
-    request = apply_request_middleware(rf.get("/?product_id=1"), shop=shop, customer=person)
+    request = apply_request_middleware(rf.get("/?product_id=1"), shop=shop, user=person.user)
     response = view_func(request)
 
     assert response.status_code == 200
@@ -130,9 +130,9 @@ def test_add_product_to_wishlist_unauthorized(rf, admin_user, regular_user):
     product = get_default_product()
     other_person = get_person_contact(admin_user)
     wishlist = Wishlist.objects.create(shop=shop, customer=other_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
+    assert request.customer
     response = add_product_to_wishlist(request, wishlist.id, product.id)
-
     assert response.status_code == 400
 
 
@@ -142,7 +142,7 @@ def test_add_product_to_wishlist(rf, admin_user):
     person = get_person_contact(admin_user)
     product = get_default_product()
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
     response = add_product_to_wishlist(request, wishlist.id, product.id)
     data = json.loads(response.content.decode("utf-8"))
 
@@ -164,7 +164,7 @@ def test_personal_wishlists(rf, admin_user, regular_user):
     Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
 
     view_func = CustomerWishlistsView.as_view()
-    request = apply_request_middleware(rf.get("/"), customer=person)
+    request = apply_request_middleware(rf.get("/"), user=person.user)
     response = view_func(request)
 
     assert response.status_code == 200
@@ -182,7 +182,7 @@ def test_view_own_wishlist_detail(rf, regular_user):
     wishlist.products.add(product)
 
     view_func = CustomerWishlistDetailView.as_view()
-    request = apply_request_middleware(rf.get("/"), customer=regular_person)
+    request = apply_request_middleware(rf.get("/"), user=regular_person.user)
     response = view_func(request, pk=wishlist.pk)
 
     assert response.status_code == 200
@@ -203,7 +203,7 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
     wishlist.products.add(product)
 
     view_func = CustomerWishlistDetailView.as_view()
-    request = apply_request_middleware(rf.get("/"), customer=regular_person)
+    request = apply_request_middleware(rf.get("/"), user=regular_person.user)
     response = view_func(request, pk=wishlist.pk)
 
     assert response.status_code == 200
@@ -224,7 +224,7 @@ def test_view_private_wishlist_detail(rf, admin_user, regular_user):
     wishlist.products.add(product)
 
     view_func = CustomerWishlistDetailView.as_view()
-    request = apply_request_middleware(rf.get("/"), customer=regular_person)
+    request = apply_request_middleware(rf.get("/"), user=regular_person.user)
 
     with pytest.raises(Http404):
         view_func(request, pk=wishlist.pk)
@@ -240,7 +240,7 @@ def test_delete_own_wishlist(rf, regular_user):
     wishlist.products.add(product)
 
     view_func = WishlistDeleteView.as_view()
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
     response = view_func(request, pk=wishlist.pk)
 
     assert response.status_code == 302
@@ -259,7 +259,7 @@ def test_delete_other_persons_wishlist(rf, admin_user, regular_user):
     wishlist.products.add(product)
 
     view_func = WishlistDeleteView.as_view()
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
     with pytest.raises(Http404):
         view_func(request, pk=wishlist.pk)
     assert Wishlist.objects.filter(pk=wishlist.pk).exists()
@@ -275,7 +275,7 @@ def test_delete_own_wishlist_product(rf, regular_user):
     wishlist.products.add(product)
 
     view_func = WishlistProductDeleteView.as_view()
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
     response = view_func(request, pk=wishlist.pk, product_pk=product.pk)
 
     assert response.status_code == 302
@@ -294,7 +294,7 @@ def test_delete_other_persons_wishlist_product(rf, admin_user, regular_user):
     wishlist.products.add(product)
 
     view_func = WishlistProductDeleteView.as_view()
-    request = apply_request_middleware(rf.post("/"), customer=person)
+    request = apply_request_middleware(rf.post("/"), user=person.user)
 
     with pytest.raises(Http404):
         view_func(request, pk=wishlist.pk, product_pk=product.pk)
@@ -313,7 +313,7 @@ def test_wishlist_search(rf, admin_user, regular_user):
 
     view_func = WishlistSearchView.as_view()
 
-    request = apply_request_middleware(rf.get("/?q=foo"), customer=person)
+    request = apply_request_middleware(rf.get("/?q=foo"), user=person.user)
     response = view_func(request)
 
     assert response.status_code == 200
