@@ -16,10 +16,11 @@ from shuup.testing.factories import get_default_product, get_default_shop
 from shuup.testing.utils import apply_request_middleware
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 from shuup_wishlist.views import (
-    add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
-    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView,
+    add_product_to_wishlist, WishlistCreateView, WishlistCustomerDetailView,
+    WishlistCustomerView, WishlistDeleteView, WishlistProductDeleteView,
     WishlistSearchView
 )
+
 from .fixtures import regular_user
 
 regular_user = regular_user  # noqa
@@ -163,7 +164,7 @@ def test_personal_wishlists(rf, admin_user, regular_user):
     wishlist.products.add(product)
     Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
 
-    view_func = CustomerWishlistsView.as_view()
+    view_func = WishlistCustomerView.as_view()
     request = apply_request_middleware(rf.get("/"), user=person.user)
     response = view_func(request)
 
@@ -181,7 +182,7 @@ def test_view_own_wishlist_detail(rf, regular_user):
     wishlist = Wishlist.objects.create(shop=shop, customer=regular_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
     wishlist.products.add(product)
 
-    view_func = CustomerWishlistDetailView.as_view()
+    view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
     response = view_func(request, pk=wishlist.pk)
 
@@ -202,7 +203,7 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.SHARED)
     wishlist.products.add(product)
 
-    view_func = CustomerWishlistDetailView.as_view()
+    view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
     response = view_func(request, pk=wishlist.pk)
 
@@ -223,7 +224,7 @@ def test_view_private_wishlist_detail(rf, admin_user, regular_user):
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PRIVATE)
     wishlist.products.add(product)
 
-    view_func = CustomerWishlistDetailView.as_view()
+    view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
 
     with pytest.raises(Http404):

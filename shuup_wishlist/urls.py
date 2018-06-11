@@ -9,16 +9,16 @@ from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 
 from .views import (
-    add_product_to_wishlist, CustomerWishlistDetailView, CustomerWishlistsView,
-    WishlistCreateView, WishlistDeleteView, WishlistProductDeleteView,
+    add_product_to_wishlist, WishlistCreateView, WishlistCustomerDetailView,
+    WishlistCustomerView, WishlistDeleteView, WishlistProductDeleteView,
     WishlistSearchView
 )
 
 urlpatterns = patterns(
     '',
-    url(r"wishlists/$", login_required(CustomerWishlistsView.as_view()), name="personal_wishlists"),
+    url(r"wishlists/$", login_required(WishlistCustomerView.as_view()), name="personal_wishlists"),
     url(r"wishlists/search/$", login_required(WishlistSearchView.as_view()), name="search_wishlists"),
-    url(r"^wishlist/(?P<pk>\d+)/$", login_required(CustomerWishlistDetailView.as_view()), name="wishlist_detail"),
+    url(r"^wishlist/(?P<pk>\d+)/$", login_required(WishlistCustomerDetailView.as_view()), name="wishlist_detail"),
     url(r"^wishlist/create/$", login_required(WishlistCreateView.as_view()), name="create_wishlist"),
     url(r"^wishlist/(?P<pk>\d+)/delete/$", login_required(WishlistDeleteView.as_view()), name="delete_wishlist"),
     url(r"^wishlist/(?P<wishlist_id>\w+)/product/(?P<product_id>\d+)/$",
