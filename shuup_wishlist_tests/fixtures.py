@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
+# Copyright (c) 2012-2018, Shuup Inc. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -14,7 +14,7 @@ REGULAR_USER_EMAIL = 'regular@shuup.local'
 
 @pytest.fixture()
 def regular_user(db, django_user_model, django_username_field):
-    UserModel = django_user_model
+    UserModel = django_user_model  # noqa
     username_field = django_username_field
 
     try:
