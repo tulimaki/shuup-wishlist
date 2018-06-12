@@ -10,6 +10,7 @@ import json
 import pytest
 from django.db.models import ObjectDoesNotExist
 from django.http import Http404
+from django.utils.translation import activate
 
 from shuup.core.models import get_person_contact
 from shuup.testing.factories import get_default_product, get_default_shop
@@ -24,6 +25,22 @@ from shuup_wishlist.views import (
 from .fixtures import regular_user
 
 regular_user = regular_user  # noqa
+
+
+def assert_wishlist(request, shop, person, view_func, product_count):
+    request = apply_request_middleware(request, shop=shop, user=person.user)
+    response = view_func(request)
+    data = json.loads(response.content.decode("utf-8"))
+    wishlist = Wishlist.objects.filter(shop=shop, customer=person).first()
+
+    assert response.status_code == 200
+    assert data.get('name', '') == 'foo'
+    assert data.get('created', False)
+    assert Wishlist.objects.filter(shop=shop, customer=person).count() == 1
+    assert str(wishlist) == wishlist.name
+    assert wishlist.name == 'foo'
+    assert wishlist.privacy == WishlistPrivacy.PUBLIC
+    assert wishlist.products.count() == product_count
 
 
 @pytest.mark.django_db
@@ -43,43 +60,19 @@ def test_wishlist_create(admin_user, rf):
     person = get_person_contact(admin_user)
     view_func = WishlistCreateView.as_view()
     request = rf.post("/", {"name": "foo", "privacy": 0})
-    request = apply_request_middleware(request, shop=shop, user=person.user)
-    response = view_func(request)
-    data = json.loads(response.content.decode("utf-8"))
-    wishlists = Wishlist.objects.filter(shop=shop, customer=person).all()
-    wishlist = wishlists.first()
-
-    assert response.status_code == 200
-    assert data.get('name', '') == 'foo'
-    assert data.get('created', False)
-    assert str(wishlist) == wishlist.name
-    assert wishlists.count() == 1
-    assert wishlist.name == 'foo'
-    assert wishlist.privacy == WishlistPrivacy.PUBLIC
-    assert wishlist.products.count() == 0
+    assert_wishlist(request, shop, person, view_func, 0)
 
 
 @pytest.mark.django_db
 def test_wishlist_create_with_product(admin_user, rf):
+    activate("en")
     shop = get_default_shop()
     person = get_person_contact(admin_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
     view_func = WishlistCreateView.as_view()
-    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": product.id})
-    request = apply_request_middleware(request, shop=shop, user=person.user)
-    response = view_func(request)
-    data = json.loads(response.content.decode("utf-8"))
-    wishlists = Wishlist.objects.filter(shop=shop, customer=person).all()
-    wishlist = wishlists.first()
-
-    assert response.status_code == 200
-    assert data.get('name', '') == 'foo'
-    assert data.get('created', False)
-    assert data.get('product_name', '') == product.name
-    assert wishlists.count() == 1
-    assert wishlist.name == 'foo'
-    assert wishlist.privacy == WishlistPrivacy.PUBLIC
-    assert wishlist.products.count() == 1
+    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": shop_product.id})
+    assert_wishlist(request, shop, person, view_func, 1)
 
 
 @pytest.mark.django_db
@@ -88,8 +81,9 @@ def test_wishlist_create_with_deleted_product(admin_user, rf):
     person = get_person_contact(admin_user)
     product = get_default_product()
     product.soft_delete(admin_user)
+    shop_product = product.get_shop_instance(shop)
     view_func = WishlistCreateView.as_view()
-    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": product.id})
+    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": shop_product.id})
     request = apply_request_middleware(request, shop=shop, user=person.user)
     response = view_func(request)
 
@@ -129,11 +123,12 @@ def test_add_product_to_wishlist_unauthorized(rf, admin_user, regular_user):
     shop = get_default_shop()
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
     other_person = get_person_contact(admin_user)
     wishlist = Wishlist.objects.create(shop=shop, customer=other_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
     request = apply_request_middleware(rf.post("/"), user=person.user)
     assert request.customer
-    response = add_product_to_wishlist(request, wishlist.id, product.id)
+    response = add_product_to_wishlist(request, wishlist.id, shop_product.id)
     assert response.status_code == 400
 
 
@@ -142,9 +137,10 @@ def test_add_product_to_wishlist(rf, admin_user):
     shop = get_default_shop()
     person = get_person_contact(admin_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
     request = apply_request_middleware(rf.post("/"), user=person.user)
-    response = add_product_to_wishlist(request, wishlist.id, product.id)
+    response = add_product_to_wishlist(request, wishlist.id, shop_product.id)
     data = json.loads(response.content.decode("utf-8"))
 
     assert response.status_code == 200
@@ -159,9 +155,10 @@ def test_personal_wishlists(rf, admin_user, regular_user):
     admin_person = get_person_contact(admin_user)
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
     Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
 
     view_func = WishlistCustomerView.as_view()
@@ -178,9 +175,10 @@ def test_view_own_wishlist_detail(rf, regular_user):
     shop = get_default_shop()
     regular_person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=regular_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
@@ -199,9 +197,10 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
     admin_person = get_person_contact(admin_user)
     regular_person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.SHARED)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
@@ -220,9 +219,10 @@ def test_view_private_wishlist_detail(rf, admin_user, regular_user):
     admin_person = get_person_contact(admin_user)
     regular_person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PRIVATE)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistCustomerDetailView.as_view()
     request = apply_request_middleware(rf.get("/"), user=regular_person.user)
@@ -236,9 +236,10 @@ def test_delete_own_wishlist(rf, regular_user):
     shop = get_default_shop()
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistDeleteView.as_view()
     request = apply_request_middleware(rf.post("/"), user=person.user)
@@ -255,9 +256,10 @@ def test_delete_other_persons_wishlist(rf, admin_user, regular_user):
     admin_person = get_person_contact(admin_user)
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistDeleteView.as_view()
     request = apply_request_middleware(rf.post("/"), user=person.user)
@@ -271,9 +273,10 @@ def test_delete_own_wishlist_product(rf, regular_user):
     shop = get_default_shop()
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistProductDeleteView.as_view()
     request = apply_request_middleware(rf.post("/"), user=person.user)
@@ -290,9 +293,10 @@ def test_delete_other_persons_wishlist_product(rf, admin_user, regular_user):
     admin_person = get_person_contact(admin_user)
     person = get_person_contact(regular_user)
     product = get_default_product()
+    shop_product = product.get_shop_instance(shop)
 
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.PUBLIC)
-    wishlist.products.add(product)
+    wishlist.products.add(shop_product)
 
     view_func = WishlistProductDeleteView.as_view()
     request = apply_request_middleware(rf.post("/"), user=person.user)

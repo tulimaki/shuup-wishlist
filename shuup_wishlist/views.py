@@ -80,7 +80,7 @@ class WishlistCreateView(CreateView):
         if created and product_id:
             wishlist.products.add(product_id)
             response["product_id"] = product_id
-            response['product_name'] = wishlist.products.get(pk=product_id).name
+            response['product_name'] = wishlist.products.get(pk=product_id).get_name()
         response['created'] = created
         return JsonResponse(response)
 
@@ -143,7 +143,7 @@ def add_product_to_wishlist(request, wishlist_id, product_id):
         response['created'] = created
         if created:
             wishlist.products.add(product_id)
-        response['product_name'] = wishlist.products.get(id=product_id).name
+        response['product_name'] = wishlist.products.get(id=product_id).get_name()
     elif wishlist_id == 'default':
         return JsonResponse({'err': 'no wishlists exist'}, status=200)
     else:
