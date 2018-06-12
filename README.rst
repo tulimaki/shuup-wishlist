@@ -93,3 +93,8 @@ To run tests, use command:
 .. code:: sh
 
    py.test -v shuup_wishlist_tests
+
+Building a release
+------------------
+
+* `python setup.py bdist_wheel`

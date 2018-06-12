@@ -1,7 +1,7 @@
 var gulp = require("gulp");
 var less = require("gulp-less");
 var concat = require("gulp-concat");
-var uglify = require("gulp-uglify");
+var uglify = require("gulp-uglify-es").default;
 var plumber = require("gulp-plumber");
 var minifycss = require("gulp-cssnano");
 var gutil = require("gulp-util");
@@ -40,5 +40,5 @@ gulp.task("less:watch", gulp.parallel(["less"]), function() {
     gulp.watch(["static_src/less/**/*.less"], ["less"]);
 });
 
-gulp.task("default", gulp.parallel(["js"]));
+gulp.task("default", gulp.parallel(["js", "less"]));
 gulp.task("watch", gulp.parallel(["js:watch", "less:watch"]));

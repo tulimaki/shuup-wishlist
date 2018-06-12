@@ -2,3 +2,6 @@ include README.rst
 include LICENSE
 
 recursive-include shuup_wishlist *.css *.jinja *.js *.po *.mo
+
+prune shuup_wishlist/node_modules
+prune shuup_wishlist_tests
