@@ -120,8 +120,11 @@ class WishlistProductDeleteView(DeleteView):
         wishlist = self.get_object()
         if wishlist.customer == request.customer:
             wishlist.products.remove(self.kwargs['product_pk'])
-            messages.success(request, _("Product removed from wishlist."))
-            return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
+            if request.GET.get("ajax", None):
+                return JsonResponse({"removed": True})
+            else:
+                messages.success(request, _("Product removed from wishlist."))
+                return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
         else:
             raise Http404
 
