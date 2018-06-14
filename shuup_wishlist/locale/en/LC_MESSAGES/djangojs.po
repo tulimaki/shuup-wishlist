@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-14 19:46+0000\n"
+"POT-Creation-Date: 2018-06-12 22:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,4 +32,10 @@ msgstr ""
 
 #, javascript-format
 msgid "%s is already in wishlist!"
+msgstr ""
+
+msgid "Product removed from wishlist!"
+msgstr ""
+
+msgid "Error removing product from wishlist. Try again later."
 msgstr ""

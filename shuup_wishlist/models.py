@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
+# Copyright (c) 2012-2018, Shuup Inc. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,7 +11,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from enumfields import Enum, EnumIntegerField
 
-from shuup.core.models import Contact, Product, Shop
+from shuup.core.models import Contact, Shop, ShopProduct
 from shuup.core.models._base import ShuupModel
 
 
@@ -32,7 +32,7 @@ class Wishlist(ShuupModel):
     name = models.CharField(verbose_name=_('name'), max_length=50)
     privacy = EnumIntegerField(WishlistPrivacy, default=WishlistPrivacy.PRIVATE, verbose_name=_('privacy'))
     created_on = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('created on'))
-    products = models.ManyToManyField(Product, related_name='wishlists', verbose_name=_('products'))
+    products = models.ManyToManyField(ShopProduct, related_name='wishlists', verbose_name=_('products'))
 
     def __str__(self):
         return self.name

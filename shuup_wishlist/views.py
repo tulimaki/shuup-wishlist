@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # This file is part of Shuup Wishlist.
 #
-# Copyright (c) 2012-2016, Shoop Commerce Ltd. All rights reserved.
+# Copyright (c) 2012-2018, Shuup Inc. All rights reserved.
 #
 # This source code is licensed under the AGPLv3 license found in the
 # LICENSE file in the root directory of this source tree.
@@ -21,13 +21,13 @@ from shuup_wishlist.forms import WishlistForm
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 
 
-class CustomerWishlistsView(DashboardViewMixin, ListView):
+class WishlistCustomerView(DashboardViewMixin, ListView):
     model = Wishlist
     context_object_name = 'customer_wishlists'
     template_name = 'shuup_wishlist/customer_wishlists.jinja'
 
     def get_queryset(self):
-        qs = super(CustomerWishlistsView, self).get_queryset()
+        qs = super(WishlistCustomerView, self).get_queryset()
         return qs.filter(customer=self.request.customer).annotate(product_count=Count('products'))
 
 
@@ -46,19 +46,19 @@ class WishlistSearchView(DashboardViewMixin, ListView):
         return qs.prefetch_related('customer')
 
 
-class CustomerWishlistDetailView(DashboardViewMixin, DetailView):
+class WishlistCustomerDetailView(DashboardViewMixin, DetailView):
     model = Wishlist
     context_object_name = 'customer_wishlist'
     template_name = 'shuup_wishlist/customer_wishlist_detail.jinja'
 
     def get_queryset(self):
-        qs = super(CustomerWishlistDetailView, self).get_queryset()
+        qs = super(WishlistCustomerDetailView, self).get_queryset()
         qs = qs.filter(
             Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) | Q(privacy=WishlistPrivacy.PUBLIC))
         return qs.prefetch_related('products').all()
 
     def get_context_data(self, **kwargs):
-        data = super(CustomerWishlistDetailView, self).get_context_data(**kwargs)
+        data = super(WishlistCustomerDetailView, self).get_context_data(**kwargs)
         wishlist = data["customer_wishlist"]
         data['is_owner'] = wishlist.customer == self.request.customer
         return data
@@ -80,14 +80,14 @@ class WishlistCreateView(CreateView):
         if created and product_id:
             wishlist.products.add(product_id)
             response["product_id"] = product_id
-            response['product_name'] = wishlist.products.get(pk=product_id).name
+            response['product_name'] = wishlist.products.get(pk=product_id).get_name()
         response['created'] = created
         return JsonResponse(response)
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
 
-    def get_form(self):
+    def get_form(self, form_class=None):
         kwargs = self.get_form_kwargs()
         kwargs['shop'] = self.request.shop
         kwargs['customer'] = self.request.customer
@@ -120,8 +120,11 @@ class WishlistProductDeleteView(DeleteView):
         wishlist = self.get_object()
         if wishlist.customer == request.customer:
             wishlist.products.remove(self.kwargs['product_pk'])
-            messages.success(request, _("Product removed from wishlist."))
-            return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
+            if request.GET.get("ajax", None):
+                return JsonResponse({"removed": True})
+            else:
+                messages.success(request, _("Product removed from wishlist."))
+                return HttpResponseRedirect(reverse_lazy('shuup:wishlist_detail', kwargs=dict(pk=wishlist.pk)))
         else:
             raise Http404
 
@@ -143,7 +146,7 @@ def add_product_to_wishlist(request, wishlist_id, product_id):
         response['created'] = created
         if created:
             wishlist.products.add(product_id)
-        response['product_name'] = wishlist.products.get(id=product_id).name
+        response['product_name'] = wishlist.products.get(id=product_id).get_name()
     elif wishlist_id == 'default':
         return JsonResponse({'err': 'no wishlists exist'}, status=200)
     else:

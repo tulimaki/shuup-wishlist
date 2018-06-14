@@ -11,23 +11,24 @@ custom theme-specific classes) to customize text-transforms, font sizes, and but
 .dropdown-btn-block {
     position: relative;
     width: 100%;
-}
 
-.dropdown-btn-block .btn-container {
-    position: absolute;
-    left: 0;
-    right: 45px;
-}
-.dropdown-btn-block .btn:first-child {
-    width: 100%;
-}
+    .btn-container {
+        position: absolute;
+        left: 0;
+        right: 45px;
+    }
+    .btn {
 
-.dropdown-btn-block .dropdown-toggle {
-    float: right;
-}
-
-.dropdown-btn-block .dropdown-menu {
-    width: 100%;
+        &:first-child {
+            width: 100%;
+        }
+    }
+    .dropdown-toggle {
+        float: right;
+    }
+    .dropdown-menu {
+        width: 100%;
+    }
 }
 
 .flash {
@@ -40,13 +41,13 @@ custom theme-specific classes) to customize text-transforms, font sizes, and but
 .wishlist-product-image {
     width: 200px;
     height: 200px;
+    > div {
+        width: inherit;
+        height: inherit;
+        background-size: contain;
+    }
 }
 
-.wishlist-product-image > div {
-    width: inherit;
-    height: inherit;
-    background-size: contain;
-}
 
 .btn-vertical .btn {
     margin-bottom: 10px;

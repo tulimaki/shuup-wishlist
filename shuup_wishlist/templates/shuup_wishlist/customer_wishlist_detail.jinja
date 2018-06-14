@@ -49,24 +49,24 @@
     <div class="table-responsive">
         <table class="table">
             <tbody>
-                {% for product in customer_wishlist.products.all() %}
-                    {% if product.get_shop_instance(request.shop).is_visible(request.customer) %}
-                    {% set image = product.primary_image %}
-                    {% if not image and product.variation_parent %}
-                        {% set image = product.variation_parent.primary_image %}
+                {% for shop_product in customer_wishlist.products.all() %}
+                    {% if shop_product.is_visible(request.customer) %}
+                    {% set image = shop_product.product.primary_image %}
+                    {% if not image and shop_product.product.variation_parent %}
+                        {% set image = shop_product.product.variation_parent.primary_image %}
                     {% endif %}
                     {% set thumbnail = image|thumbnail(size=(200,200), crop="smart", upscale=True) %}
-                    {% set product_url = url("shuup:product", pk=product.pk, slug=product.slug) %}
+                    {% set product_url = url("shuup:product", pk=shop_product.product.pk, slug=shop_product.product.slug) %}
                     {% set remove_product_url = url("shuup:remove_product_from_wishlist",
                                                     pk=customer_wishlist.pk,
-                                                    product_pk=product.pk)%}
+                                                    product_pk=shop_product.pk)%}
                     <tr>
                         <td class="wishlist-product-image">
                             <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shuup_wishlist/img/no_image.png{% endif %}')"></div>
                         </td>
                         <td>
-                            <h2>{{ product.name }}</h2>
-                            <p>{{ product.description|safe }}</p>
+                            <h2>{{ shop_product.get_name() }}</h2>
+                            <p>{{ shop_product.get_name()|safe }}</p>
                         </td>
                         <td class="text-right">
                             <div class="btn-vertical">
@@ -79,7 +79,10 @@
                                     <form method="POST"
                                           action="{{ remove_product_url }}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit"
+                                                class="btn btn-primary remove-from-wishlist"
+                                                data-product-id="{{ shop_product.id }}"
+                                                data-wishlist-id="{{ customer_wishlist.pk }}">
                                             <i class="fa fa-trash-o"></i>
                                             {% trans %}Remove{% endtrans %}
                                         </button>
