@@ -8,6 +8,8 @@
 import os
 import tempfile
 
+from shuup_workbench.settings.utils import get_disabled_migrations
+
 SECRET_KEY = "xxx"
 
 
@@ -39,16 +41,6 @@ DATABASES = {
     }
 }
 
-
-class DisableMigrations(object):
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return "notmigrations"
-
-
-MIGRATION_MODULES = DisableMigrations()
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "var", "media")
 
 STATIC_URL = "static/"
@@ -94,3 +86,5 @@ MIDDLEWARE_CLASSES = [
     'shuup.front.middleware.ProblemMiddleware',
     'shuup.front.middleware.ShuupFrontMiddleware',
 ]
+
+MIGRATION_MODULES = get_disabled_migrations()
