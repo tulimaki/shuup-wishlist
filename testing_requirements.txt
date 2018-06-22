@@ -1,4 +1,4 @@
-shuup>=1.0<2.0
+-e git+https://github.com/shuup/shuup.git@v1.6.2#egg=shuup
 coveralls
 pytest>=2.8
 pytest-cov

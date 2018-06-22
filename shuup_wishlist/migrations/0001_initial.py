@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import enumfields.fields
+
 import shuup_wishlist.models
 
 
