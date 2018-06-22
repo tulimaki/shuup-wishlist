@@ -1,6 +1,6 @@
 -e git+https://github.com/shuup/shuup.git@v1.6.2#egg=shuup
 coveralls
-pytest>=2.8
+pytest>=3.6
 pytest-cov
-pytest-django>=2.9
+pytest-django>=3.3.2
 -e .
