@@ -27,8 +27,8 @@ def test_form(admin_user, rf):
         data={
             "name": "foo",
             "privacy": 0,
-            "product_id": product.id
-        }, shop=shop, customer=customer, product_id=shop_product.id)
+            "shop_product_id": product.id
+        }, shop=shop, customer=customer, shop_product_id=shop_product.id)
     form.full_clean()
     assert form.is_valid()
     assert not form.errors
@@ -48,8 +48,8 @@ def test_invalid_form(admin_user, rf):
         data={
             "name": "foo",
             "privacy": 0,
-            "product_id": product.id
-        }, shop=shop2, customer=customer, product_id=shop_product.id)
+            "shop_product_id": product.id
+        }, shop=shop2, customer=customer, shop_product_id=shop_product.id)
     form.full_clean()
     assert not form.is_valid()
     assert form.errors
