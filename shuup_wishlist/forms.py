@@ -22,22 +22,27 @@ class WishlistForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.shop = kwargs.pop('shop', None)
         self.customer = kwargs.pop('customer', None)
-        self.product_id = kwargs.pop('product_id', None)
+        self.shop_product_id = kwargs.pop('shop_product_id', None)
         super(WishlistForm, self).__init__(*args, **kwargs)
 
     def is_valid(self):
-        if self.product_id:
+        if self.shop_product_id:
+            errors = []
+
             try:
-                shop_product = ShopProduct.objects.get(pk=self.product_id, shop=self.shop)
+                shop_product = ShopProduct.objects.get(pk=self.shop_product_id)
             except ShopProduct.DoesNotExist as e:
-                errors = [
-                    ValidationError(_('Unknown error.'), code="unknown_error")
-                ]
+                errors.append(ValidationError(_('Invalid shop product.'), code="invalid-shop-product"))
+
                 if has_installed("raven.contrib.django.raven_compat"):
                     from raven.contrib.django.raven_compat.models import client
                     client.captureException()
-            else:
-                errors = shop_product.get_visibility_errors(self.customer)
+
+            if shop_product.shop != self.shop:
+                errors.append(ValidationError(_('Invalid shop.'), code="invalid-shop"))
+
+            errors.extend(list(shop_product.get_visibility_errors(self.customer)))
             for error in errors:
                 self.add_error(None, error)
+
         return super(WishlistForm, self).is_valid()

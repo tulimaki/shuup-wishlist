@@ -11,8 +11,8 @@
                 <form id="create-wishlist-form" method="POST" action="{{ url('shuup:create_wishlist') }}">
                     <div class="alert alert-danger hidden"></div>
                     {% csrf_token %}
-                    {% if product_id %}
-                    <input type="hidden" name="product_id" value="{{ product_id }}" />
+                    {% if shop_product_id %}
+                    <input type="hidden" name="shop_product_id" value="{{ shop_product_id }}" />
                     {% endif %}
                     {{ bs3.field(form["name"]) }}
                     {{ bs3.field(form["privacy"]) }}
@@ -29,7 +29,7 @@
 
         function refreshView(wishlist){
             if(wishlist.product_name){
-                var $wishlistLink = $('<li><a data-wishlist-id="' + wishlist.id + '" data-product-id="' + wishlist.product_id + '">' + wishlist.name + '</a></li>');
+                var $wishlistLink = $('<li><a data-wishlist-id="' + wishlist.id + '" data-shop-product-id="' + wishlist.shop_product_id + '">' + wishlist.name + '</a></li>');
                 var $pos = $('.add-to-wishlist-dropdown .divider');
                 if($pos.length > 0){
                     $wishlistLink.insertBefore($pos);

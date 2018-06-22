@@ -20,8 +20,8 @@ urlpatterns = [
     url(r"^wishlist/(?P<pk>\d+)/$", login_required(WishlistCustomerDetailView.as_view()), name="wishlist_detail"),
     url(r"^wishlist/create/$", login_required(WishlistCreateView.as_view()), name="create_wishlist"),
     url(r"^wishlist/(?P<pk>\d+)/delete/$", login_required(WishlistDeleteView.as_view()), name="delete_wishlist"),
-    url(r"^wishlist/(?P<wishlist_id>\w+)/product/(?P<product_id>\d+)/$",
+    url(r"^wishlist/(?P<wishlist_id>\w+)/product/(?P<shop_product_id>\d+)/$",
         login_required(add_product_to_wishlist), name="add_product_to_wishlist"),
-    url(r"^wishlist/(?P<pk>\d+)/product/(?P<product_pk>\d+)/remove/$",
+    url(r"^wishlist/(?P<pk>\d+)/product/(?P<shop_product_pk>\d+)/remove/$",
         login_required(WishlistProductDeleteView.as_view()), name="remove_product_from_wishlist"),
 ]

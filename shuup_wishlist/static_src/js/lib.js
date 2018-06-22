@@ -47,10 +47,10 @@ window.ShuupWishlist = {
         }
         return cookieValue;
     },
-    showCreateWishlistModal: function(productId) {
+    showCreateWishlistModal: function(shopProductId) {
         var data = {};
-        if (typeof productId !== "undefined") {
-            data.product_id = productId;  // eslint-disable-line camelcase
+        if (typeof shopProductId !== "undefined") {
+            data.shop_product_id = shopProductId;  // eslint-disable-line camelcase
         }
 
         $.ajax({
@@ -98,20 +98,20 @@ window.ShuupWishlist = {
             }
         });
     },
-    removeProduct(wishlistId, productId, hideElement=null) {
-        this.query("remove", wishlistId, productId, hideElement);
+    removeProduct(wishlistId, shopProductId, hideElement=null) {
+        this.query("remove", wishlistId, shopProductId, hideElement);
     },
-    addProduct(wishlistId, productId) {
-        this.query("add", wishlistId, productId);
+    addProduct(wishlistId, shopProductId) {
+        this.query("add", wishlistId, shopProductId);
     },
-    query(action, wishlistId, productId, hideElement=null) {
+    query(action, wishlistId, shopProductId, hideElement=null) {
         if(wishlistId === null) {
             wishlistId = "default";
         }
         var urlAction = (action === "remove") ? "remove/?ajax=1" : "";
         var that = this;
         $.ajax({
-            url: interpolate("/wishlist/%s/product/%s/%s", [wishlistId,  productId, urlAction]),
+            url: interpolate("/wishlist/%s/product/%s/%s", [wishlistId,  shopProductId, urlAction]),
             method: "POST" ,
             data: {
                 csrfmiddlewaretoken: this.getCSRFToken()
@@ -123,7 +123,7 @@ window.ShuupWishlist = {
                         msg = interpolate(gettext("%s added to wishlist!"), [response.product_name]);
                         that.flashMessage("success", msg);
                     } else if (response.err) {
-                        that.showCreateWishlistModal(productId);
+                        that.showCreateWishlistModal(shopProductId);
                     } else {
                         msg = interpolate(gettext("%s is already in wishlist!"), [response.product_name]);
                         that.flashMessage("danger", msg);
