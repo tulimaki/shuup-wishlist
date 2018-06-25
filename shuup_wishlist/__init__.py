@@ -24,4 +24,5 @@ class AppConfig(shuup.apps.AppConfig):
         ]
     }
 
+
 default_app_config = __name__ + ".AppConfig"

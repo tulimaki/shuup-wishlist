@@ -28,7 +28,10 @@ class WishlistCustomerView(DashboardViewMixin, ListView):
 
     def get_queryset(self):
         qs = super(WishlistCustomerView, self).get_queryset()
-        return qs.filter(customer=self.request.customer).annotate(product_count=Count('products'))
+        return qs.filter(
+            customer=self.request.customer,
+            shop=self.request.shop
+        ).annotate(product_count=Count('products'))
 
 
 class WishlistSearchView(DashboardViewMixin, ListView):
@@ -39,7 +42,7 @@ class WishlistSearchView(DashboardViewMixin, ListView):
 
     def get_queryset(self):
         qs = super(WishlistSearchView, self).get_queryset()
-        qs = qs.filter(privacy=WishlistPrivacy.PUBLIC).annotate(product_count=Count('products'))
+        qs = qs.filter(privacy=WishlistPrivacy.PUBLIC, shop=self.request.shop).annotate(product_count=Count('products'))
         q = self.request.GET.get("q")
         if q:
             qs = qs.filter(Q(customer__name__icontains=q) | Q(customer__email__icontains=q) | Q(name__icontains=q))
@@ -52,7 +55,7 @@ class WishlistCustomerDetailView(DashboardViewMixin, DetailView):
     template_name = 'shuup_wishlist/customer_wishlist_detail.jinja'
 
     def get_queryset(self):
-        qs = super(WishlistCustomerDetailView, self).get_queryset()
+        qs = super(WishlistCustomerDetailView, self).get_queryset().filter(shop=self.request.shop)
         qs = qs.filter(
             Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) | Q(privacy=WishlistPrivacy.PUBLIC))
         return qs.prefetch_related('products').all()
@@ -72,15 +75,15 @@ class WishlistCreateView(CreateView):
     def form_valid(self, form):
         shop = self.request.shop
         customer = self.request.customer
-        product_id = self.request.POST.get('product_id')
+        shop_product_id = self.request.POST.get('shop_product_id')
         response = {}
         wishlist, created = Wishlist.objects.get_or_create(shop=shop, customer=customer, **form.cleaned_data)
         response['id'] = wishlist.id
         response['name'] = wishlist.name
-        if created and product_id:
-            wishlist.products.add(product_id)
-            response["product_id"] = product_id
-            response['product_name'] = wishlist.products.get(pk=product_id).get_name()
+        if created and shop_product_id:
+            wishlist.products.add(shop_product_id)
+            response["shop_product_id"] = shop_product_id
+            response['product_name'] = wishlist.products.get(pk=shop_product_id).get_name()
         response['created'] = created
         return JsonResponse(response)
 
@@ -91,12 +94,12 @@ class WishlistCreateView(CreateView):
         kwargs = self.get_form_kwargs()
         kwargs['shop'] = self.request.shop
         kwargs['customer'] = self.request.customer
-        kwargs['product_id'] = self.request.POST.get('product_id')
+        kwargs['shop_product_id'] = self.request.POST.get('shop_product_id')
         return WishlistForm(**kwargs)
 
     def get_context_data(self, **kwargs):
         data = super(WishlistCreateView, self).get_context_data(**kwargs)
-        data['product_id'] = self.request.GET.get('product_id')
+        data['shop_product_id'] = self.request.GET.get('shop_product_id')
         return data
 
 
@@ -119,7 +122,7 @@ class WishlistProductDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         wishlist = self.get_object()
         if wishlist.customer == request.customer:
-            wishlist.products.remove(self.kwargs['product_pk'])
+            wishlist.products.remove(self.kwargs['shop_product_pk'])
             if request.GET.get("ajax", None):
                 return JsonResponse({"removed": True})
             else:
@@ -129,7 +132,7 @@ class WishlistProductDeleteView(DeleteView):
             raise Http404
 
 
-def add_product_to_wishlist(request, wishlist_id, product_id):
+def add_product_to_wishlist(request, wishlist_id, shop_product_id):
     response = {'created': False}
     if request.method != 'POST':
         return JsonResponse({'err': 'invalid request'}, status=405)
@@ -142,11 +145,11 @@ def add_product_to_wishlist(request, wishlist_id, product_id):
     else:
         wishlist = Wishlist.objects.filter(customer=request.customer, shop=request.shop).first()
     if wishlist:
-        created = not wishlist.products.filter(id=product_id).exists()
+        created = not wishlist.products.filter(id=shop_product_id).exists()
         response['created'] = created
         if created:
-            wishlist.products.add(product_id)
-        response['product_name'] = wishlist.products.get(id=product_id).get_name()
+            wishlist.products.add(shop_product_id)
+        response['product_name'] = wishlist.products.get(id=shop_product_id).get_name()
     elif wishlist_id == 'default':
         return JsonResponse({'err': 'no wishlists exist'}, status=200)
     else:

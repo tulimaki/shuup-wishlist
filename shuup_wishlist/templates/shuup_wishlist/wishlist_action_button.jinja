@@ -1,9 +1,10 @@
 {% if request.customer %}
 <div class="btn-group dropdown-btn-block">
     <div class="btn-container">
-        <button type="button"
-                data-product-id="{{ shop_product.id }}"
-                class="btn btn-primary wishlist-btn btn-lg add-to-wishlist">
+        <button
+            type="button"
+            data-shop-product-id="{{ shop_product.id }}"
+            class="btn btn-primary wishlist-btn btn-lg add-to-wishlist">
             {% trans %}Add to wishlist{% endtrans %}
         </button>
     </div>
@@ -19,12 +20,12 @@
             {% for wishlist in wishlists %}
                 <li><a data-wishlist-id="{{ wishlist.id }}"
                        href="#"
-                       data-product-id="{{ shop_product.id }}">{{ wishlist.name }}</a></li>
+                       data-shop-product-id="{{ shop_product.id }}">{{ wishlist.name }}</a></li>
             {% endfor %}
             <li role="separator" class="divider"></li>
         {% endif %}
         <li class="create-wishlist-list-item">
-            <a class="create-wishlist" href="{{ url('shuup:create_wishlist') }}" data-product-id="{{ shop_product.id }}">
+            <a class="create-wishlist" href="{{ url('shuup:create_wishlist') }}" data-shop-product-id="{{ shop_product.id }}">
             {% trans %}Create a wishlist{% endtrans %}
             </a>
         </li>

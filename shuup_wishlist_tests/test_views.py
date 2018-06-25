@@ -12,8 +12,11 @@ from django.db.models import ObjectDoesNotExist
 from django.http import Http404
 from django.utils.translation import activate
 
-from shuup.core.models import get_person_contact
-from shuup.testing.factories import get_default_product, get_default_shop
+from shuup.core.models import get_person_contact, ShopProduct
+from shuup.testing.factories import (
+    create_product, get_default_product, get_default_shop,
+    get_default_supplier, get_shop
+)
 from shuup.testing.utils import apply_request_middleware
 from shuup_wishlist.models import Wishlist, WishlistPrivacy
 from shuup_wishlist.views import (
@@ -66,13 +69,24 @@ def test_wishlist_create(admin_user, rf):
 @pytest.mark.django_db
 def test_wishlist_create_with_product(admin_user, rf):
     activate("en")
-    shop = get_default_shop()
+    shop1 = get_shop(identifier="shop1", domain="shop1", name="shop1")
+    shop2 = get_shop(identifier="shop2", domain="shop2", name="shop2")
+
     person = get_person_contact(admin_user)
-    product = get_default_product()
-    shop_product = product.get_shop_instance(shop)
+
+    product1_s1 = create_product("p1_s1", shop1, get_default_supplier())
+    product1_s2 = create_product("p1_s2", shop2, get_default_supplier())
+    product2_s1 = create_product("p2_s1", shop1, get_default_supplier())
+    product2_s2 = create_product("p2_s2", shop2, get_default_supplier())
+
+    shop1_product2 = product2_s1.get_shop_instance(shop1)
     view_func = WishlistCreateView.as_view()
-    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": shop_product.id})
-    assert_wishlist(request, shop, person, view_func, 1)
+    request = rf.post("/", {"name": "foo", "privacy": 0, "shop_product_id": shop1_product2.id}, HTTP_HOST=shop1.domain)
+    assert_wishlist(request, shop1, person, view_func, 1)
+
+    shop2_product2 = product2_s2.get_shop_instance(shop2)
+    request = rf.post("/", {"name": "foo", "privacy": 0, "shop_product_id": shop2_product2.id}, HTTP_HOST=shop2.domain)
+    assert_wishlist(request, shop2, person, view_func, 1)
 
 
 @pytest.mark.django_db
@@ -83,7 +97,7 @@ def test_wishlist_create_with_deleted_product(admin_user, rf):
     product.soft_delete(admin_user)
     shop_product = product.get_shop_instance(shop)
     view_func = WishlistCreateView.as_view()
-    request = rf.post("/", {"name": "foo", "privacy": 0, "product_id": shop_product.id})
+    request = rf.post("/", {"name": "foo", "privacy": 0, "shop_product_id": shop_product.id})
     request = apply_request_middleware(request, shop=shop, user=person.user)
     response = view_func(request)
 
@@ -95,12 +109,12 @@ def test_wishlist_create_get_context_data(admin_user, rf):
     shop = get_default_shop()
     person = get_person_contact(admin_user)
     view_func = WishlistCreateView.as_view()
-    request = apply_request_middleware(rf.get("/?product_id=1"), shop=shop, user=person.user)
+    request = apply_request_middleware(rf.get("/?shop_product_id=1"), shop=shop, user=person.user)
     response = view_func(request)
 
     assert response.status_code == 200
-    assert 'product_id' in response.context_data.keys()
-    assert response.context_data.get('product_id') == '1'
+    assert 'shop_product_id' in response.context_data.keys()
+    assert response.context_data.get('shop_product_id') == '1'
 
 
 @pytest.mark.django_db
@@ -280,11 +294,11 @@ def test_delete_own_wishlist_product(rf, regular_user):
 
     view_func = WishlistProductDeleteView.as_view()
     request = apply_request_middleware(rf.post("/"), user=person.user)
-    response = view_func(request, pk=wishlist.pk, product_pk=product.pk)
+    response = view_func(request, pk=wishlist.pk, shop_product_pk=shop_product.pk)
 
     assert response.status_code == 302
     with pytest.raises(ObjectDoesNotExist):
-        Wishlist.objects.get(pk=wishlist.pk).products.get(pk=product.pk)
+        Wishlist.objects.get(pk=wishlist.pk).products.get(pk=shop_product.pk)
 
 
 @pytest.mark.django_db
@@ -302,8 +316,8 @@ def test_delete_other_persons_wishlist_product(rf, admin_user, regular_user):
     request = apply_request_middleware(rf.post("/"), user=person.user)
 
     with pytest.raises(Http404):
-        view_func(request, pk=wishlist.pk, product_pk=product.pk)
-    assert Wishlist.objects.get(pk=wishlist.pk).products.filter(pk=product.pk).exists()
+        view_func(request, pk=wishlist.pk, shop_product_pk=shop_product.pk)
+    assert Wishlist.objects.get(pk=wishlist.pk).products.filter(pk=shop_product.pk).exists()
 
 
 @pytest.mark.django_db

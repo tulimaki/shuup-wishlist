@@ -16,7 +16,7 @@ from shuup_wishlist.models import Wishlist
 
 try:
     from shuup.xtheme import TemplatedPlugin
-except:
+except ImportError:
     from shuup.xtheme.plugins import TemplatedPlugin
 
 

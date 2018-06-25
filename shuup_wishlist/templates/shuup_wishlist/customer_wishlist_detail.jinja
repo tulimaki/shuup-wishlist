@@ -59,7 +59,7 @@
                     {% set product_url = url("shuup:product", pk=shop_product.product.pk, slug=shop_product.product.slug) %}
                     {% set remove_product_url = url("shuup:remove_product_from_wishlist",
                                                     pk=customer_wishlist.pk,
-                                                    product_pk=shop_product.pk)%}
+                                                    shop_product_pk=shop_product.pk)%}
                     <tr>
                         <td class="wishlist-product-image">
                             <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shuup_wishlist/img/no_image.png{% endif %}')"></div>
@@ -81,7 +81,7 @@
                                         {% csrf_token %}
                                         <button type="submit"
                                                 class="btn btn-primary remove-from-wishlist"
-                                                data-product-id="{{ shop_product.id }}"
+                                                data-shop-product-id="{{ shop_product.id }}"
                                                 data-wishlist-id="{{ customer_wishlist.pk }}">
                                             <i class="fa fa-trash-o"></i>
                                             {% trans %}Remove{% endtrans %}
