@@ -204,9 +204,11 @@ def test_view_own_wishlist_detail(rf, regular_user):
     assert response.context_data['customer_wishlist'].name == wishlist.name
     assert response.context_data['customer_wishlist'].products.count() == 1
 
-
+@pytest.mark.parametrize("is_anonymous", [
+    True, False
+])
 @pytest.mark.django_db
-def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
+def test_view_shared_wishlist_detail(rf, admin_user, regular_user, is_anonymous):
     shop = get_default_shop()
     admin_person = get_person_contact(admin_user)
     regular_person = get_person_contact(regular_user)
@@ -215,16 +217,20 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user):
 
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.SHARED)
     wishlist.products.add(shop_product)
-
     view_func = WishlistCustomerDetailView.as_view()
-    request = apply_request_middleware(rf.get("/"), user=regular_person.user)
-    response = view_func(request, pk=wishlist.pk)
-
-    assert response.status_code == 200
-    assert 'customer_wishlist' in response.context_data
-    assert not response.context_data["is_owner"]
-    assert response.context_data['customer_wishlist'].name == wishlist.name
-    assert response.context_data['customer_wishlist'].products.count() == 1
+    
+    if(is_anonymous):
+        request = apply_request_middleware(rf.get("/"))
+        with pytest.raises(Http404):
+            view_func(request, pk=wishlist.pk)
+    else:
+        request = apply_request_middleware(rf.get("/"), user=regular_person.user)
+        response = view_func(request, pk=wishlist.pk)
+        assert response.status_code == 200
+        assert 'customer_wishlist' in response.context_data
+        assert not response.context_data["is_owner"]
+        assert response.context_data['customer_wishlist'].name == wishlist.name
+        assert response.context_data['customer_wishlist'].products.count() == 1
 
 
 @pytest.mark.django_db
@@ -262,7 +268,6 @@ def test_delete_own_wishlist(rf, regular_user):
     assert response.status_code == 302
     with pytest.raises(Wishlist.DoesNotExist):
         Wishlist.objects.get(pk=wishlist.pk)
-
 
 @pytest.mark.django_db
 def test_delete_other_persons_wishlist(rf, admin_user, regular_user):
