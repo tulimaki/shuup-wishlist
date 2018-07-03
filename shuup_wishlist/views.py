@@ -56,8 +56,12 @@ class WishlistCustomerDetailView(DashboardViewMixin, DetailView):
 
     def get_queryset(self):
         qs = super(WishlistCustomerDetailView, self).get_queryset().filter(shop=self.request.shop)
-        qs = qs.filter(
-            Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) | Q(privacy=WishlistPrivacy.PUBLIC))
+        if self.request.user.is_authenticated():
+            qs = qs.filter(
+                Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) |
+                Q(privacy=WishlistPrivacy.PUBLIC)).distinct()
+        else:
+            qs = qs.filter(Q(privacy=WishlistPrivacy.PUBLIC))
         return qs.prefetch_related('products').all()
 
     def get_context_data(self, **kwargs):
