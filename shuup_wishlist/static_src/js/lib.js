@@ -7,7 +7,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 window.ShuupWishlist = {
-    flashMessage: function(messageType, message, icon = "") {
+    flashMessage: function(messageType, message, icon) {
         var type = interpolate("alert-%s", [messageType]);
         var msg = interpolate("<div class='%s'>", [interpolate("fade flash wishlist-alert alert %s", [type])]);
 
@@ -80,10 +80,10 @@ window.ShuupWishlist = {
                     // we are on the product preview page
                     if (response.product_name) {
                         msg = interpolate(gettext("%s added to wishlist!"), [response.product_name]);
-                        that.flashMessage("success", msg);
+                        that.flashMessage("success", msg, "");
                     } else {
                         msg = gettext("Wishlist created!");
-                        that.flashMessage("success", msg);
+                        that.flashMessage("success", msg, "");
                     }
                 } else {
                     msg = gettext("A wishlist with this name already exists!");
@@ -121,28 +121,28 @@ window.ShuupWishlist = {
                 if (action === "add") {
                     if (response.created) {
                         msg = interpolate(gettext("%s added to wishlist!"), [response.product_name]);
-                        that.flashMessage("success", msg);
+                        that.flashMessage("success", msg, "");
                     } else if (response.err) {
                         that.showCreateWishlistModal(shopProductId);
                     } else {
                         msg = interpolate(gettext("%s is already in wishlist!"), [response.product_name]);
-                        that.flashMessage("danger", msg);
+                        that.flashMessage("danger", msg, "");
                     }
                 }
                 else {
                     if (response.removed) {
-                        that.flashMessage("success", gettext("Product removed from wishlist!"));
+                        that.flashMessage("success", gettext("Product removed from wishlist!"), "");
                         if (hideElement) {
                             hideElement.hide();
                         }
                     } else {
-                        that.flashMessage("danger", gettext("Error removing product from wishlist. Try again later."));
+                        that.flashMessage("danger", gettext("Error removing product from wishlist. Try again later."), "");
                     }
                 }
             },
             error: function(err) {
                 if(err && err.responseJSON && err.responseJSON.err) {
-                    that.flashMessage("danger", err.responseJSON.err);
+                    that.flashMessage("danger", err.responseJSON.err, "");
                 }
             }
         });
