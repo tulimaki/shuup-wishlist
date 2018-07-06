@@ -12,6 +12,7 @@ from shuup_workbench.settings.utils import get_disabled_migrations
 
 SECRET_KEY = "xxx"
 
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = (
     "django.contrib.auth",
