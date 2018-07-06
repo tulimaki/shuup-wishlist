@@ -10,7 +10,7 @@ import shuup_wishlist.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shuup', '0010_update_managers'),
+        ('shuup', '0001_initial'),
     ]
 
     operations = [

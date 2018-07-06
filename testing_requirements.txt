@@ -1,4 +1,4 @@
--e git+https://github.com/shuup/shuup.git@v1.6.2#egg=shuup
+shuup
 coveralls
 pytest>=3.6
 pytest-cov

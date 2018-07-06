@@ -22,8 +22,12 @@ United States Of America
 License
 -------
 
-Shuup Wishlist is published under the GNU Affero General Public License,
-version 3 (AGPLv3). See the LICENSE file.
+Shuup Wishlist is published under Open Software License version 3.0 (OSL-3.0).
+See the LICENSE file distributed with Shuup.
+
+Some external libraries and contributions bundled with Shuup may be
+published under other compatible licenses. For these, please
+refer to the licenses included within each package.
 
 Chat
 ----
@@ -50,22 +54,6 @@ Documentation
 
 Shuup documentation is available online at `Read the Docs
 <http://shuup.readthedocs.org/>`__.
-
-Documentation is built with `Sphinx <http://sphinx-doc.org/>`__.
-
-Issue the following commands to build the documentation:
-
-.. code:: sh
-
-    pip install Sphinx  # to install Sphinx
-    cd doc && make html
-
-To update the API documentation rst files, e.g. after adding new
-modules, use command:
-
-.. code:: sh
-
-    ./generate_apidoc.py
 
 Running tests
 -------------
