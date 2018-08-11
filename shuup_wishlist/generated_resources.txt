@@ -1,1 +1,3 @@
 static/shuup_wishlist/js/scripts.js
+static/shuup_wishlist/css/style.css
+static/shuup_wishlist/css/style.map
