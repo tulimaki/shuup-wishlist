@@ -35,3 +35,4 @@ pip-log.txt
 sdist/
 target/
 var/
+.DS_Store
