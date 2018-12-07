@@ -9,7 +9,7 @@ except ImportError:
 if __name__ == '__main__':
     setuptools.setup(
         name="shuup_wishlist",
-        version="0.3.10",
+        version="0.3.11",
         description="Shuup Wishlist",
         packages=setuptools.find_packages(exclude=["shuup_wishlist_tests"]),
         include_package_data=True,
