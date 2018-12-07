@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+# This file is part of Shuup Wishlist.
+#
+# Copyright (c) 2012-2018, Shuup Inc. All rights reserved.
+#
+# This source code is licensed under the AGPLv3 license found in the
+# LICENSE file in the root directory of this source tree.
 import setuptools
 
 try:
@@ -8,12 +15,6 @@ except ImportError:
 
 if __name__ == '__main__':
     setuptools.setup(
-        name="shuup_wishlist",
-        version="0.3.11",
-        description="Shuup Wishlist",
-        packages=setuptools.find_packages(exclude=["shuup_wishlist_tests"]),
-        include_package_data=True,
-        entry_points={"shuup.addon": "shuup_wishlist=shuup_wishlist"},
         cmdclass=(shuup_setup_utils.COMMANDS if shuup_setup_utils else {}),
-        install_requires=[],
-    )
+        setup_requires=['setuptools>=34.0', 'setuptools-gitver'],
+        gitver=True)
