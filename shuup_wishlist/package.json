@@ -11,6 +11,9 @@
     "build:styles": "parcel build -d static/shuup_wishlist/css static_src/less/style.less",
     "build": "npm i && concurrently --kill-others-on-fail npm:build:*"
   },
+  "shuup": {
+    "static_build": true
+  },
   "author": "",
   "license": "Proprietary",
   "private": true,
@@ -19,7 +22,10 @@
     "babel-preset-env": "^1.7.0",
     "concurrently": "^3.6.1",
     "less": "^3.8.1",
-    "parcel-bundler": "^1.9.7",
+    "parcel-bundler": "^1.10.3",
     "postcss-modules": "^1.3.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3"
   }
 }
