@@ -24,8 +24,12 @@ def add_resources(context, content):
     request = context.get("request")
     if request:
         match = request.resolver_match
-        if match and match.app_name == "shuup_admin":
+        # not a view match or the app is Shuup Admin
+        if not match or match.app_name == "shuup_admin":
             return
+
+    if not context.get("view"):
+        return
 
     add_resource(context, "head_end", "%sshuup_wishlist/css/style.css?v=0.4.1.css" % settings.STATIC_URL)
     add_resource(context, "body_end", "%sshuup_wishlist/js/scripts.js?v=0.4.1.js" % settings.STATIC_URL)
