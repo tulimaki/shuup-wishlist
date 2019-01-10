@@ -1,7 +1,7 @@
 /**
  * This file is part of Shuup Wishlist.
  *
- * Copyright (c) 2012-2018, Shuup Inc. All rights reserved.
+ * Copyright (c) 2012-2018, Shoop Commerce Ltd. All rights reserved.
  *
  * This source code is licensed under the AGPLv3 license found in the
  * LICENSE file in the root directory of this source tree.
