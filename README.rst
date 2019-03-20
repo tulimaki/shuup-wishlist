@@ -9,6 +9,10 @@ Shuup Wishlist
 This package implements wishlists
 for the `Shuup <https://www.shuup.com/>`_ platform.
 
+
+**Warning!** Original repository https://github.com/shuup/shuup-wishlist. Please create your pull requests to original repository. **We update this automatically from original repository after release**. If you want to deriviate your work then plese fork this instead the original repository for correct license.
+
+
 Copyright
 ---------
 
