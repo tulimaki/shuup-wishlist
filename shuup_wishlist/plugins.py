@@ -31,8 +31,8 @@ def add_resources(context, content):
     if not context.get("view"):
         return
 
-    add_resource(context, "head_end", "%sshuup_wishlist/css/style.css?v=0.4.4.css" % settings.STATIC_URL)
-    add_resource(context, "body_end", "%sshuup_wishlist/js/scripts.js?v=0.4.4.js" % settings.STATIC_URL)
+    add_resource(context, "head_end", "%sshuup_wishlist/css/style.css?v=0.4.5.css" % settings.STATIC_URL)
+    add_resource(context, "body_end", "%sshuup_wishlist/js/scripts.js?v=0.4.5.js" % settings.STATIC_URL)
 
 
 class WishlistPlugin(TemplatedPlugin):
