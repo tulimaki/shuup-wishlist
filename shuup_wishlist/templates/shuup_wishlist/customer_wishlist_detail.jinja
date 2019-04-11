@@ -5,6 +5,8 @@
 {% endif %}
 {% block title -%}{{ customer_wishlist.name }}{%- endblock %}
 
+{% set item_count = customer_wishlist.products.count() %}
+
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
@@ -16,20 +18,20 @@
 {% macro render_wishlist() %}
 <h1>
     {{ customer_wishlist.name }}
-    {% if is_owner %}
+    {% if is_owner and item_count %}
         <div class="pull-right">
             <form id="delete-customer-wishlist"
                method="post"
                action="{{ url("shuup:delete_wishlist", pk=customer_wishlist.pk) }}">
                 {% csrf_token %}
                 <button class="btn btn-primary">
-                    <i class="fa fa-trash"></i> {% trans %}Delete Wishlist{% endtrans %}
+                    <i class="fa fa-trash"></i> {% trans %}Delete{% endtrans %}
                 </button>
             </form>
         </div>
     {% endif %}
 </h1>
-{% if customer_wishlist.products.count() %}
+{% if item_count %}
 {% if is_owner %}
 <div class="row">
     <div class="col-md-12">
@@ -72,8 +74,7 @@
                             <div class="btn-vertical">
                                 <a href="{{ product_url }}" class="btn btn-primary">
                                     <i class="fa fa-search"></i>
-                                    {% trans %}View Product{% endtrans %}
-                                    <i class="fa fa-angle-double-right"></i>
+                                    {% trans %}View{% endtrans %}
                                 </a>
                                 {% if is_owner %}
                                     <form method="POST"
@@ -99,7 +100,7 @@
 </div>
 {% else %}
     <p class="lead">
-        <i class="fa fa-info-circle text-info"></i> {{ _("No products found.") }}
+        <i class="fa fa-info-circle text-info"></i> {{ _("This list is empty.") }}
     </p>
 {% endif %}
 {% endmacro %}
