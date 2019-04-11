@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-12 22:18+0000\n"
+"POT-Creation-Date: 2019-04-11 21:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,11 +31,15 @@ msgid "Error"
 msgstr ""
 
 #, javascript-format
-msgid "%s is already in wishlist!"
+msgid "%s added successfully!"
 msgstr ""
 
-msgid "Product removed from wishlist!"
+#, javascript-format
+msgid "%s is already in list!"
 msgstr ""
 
-msgid "Error removing product from wishlist. Try again later."
+msgid "Item removed from list!"
+msgstr ""
+
+msgid "Error removing item from list. Try again later."
 msgstr ""
