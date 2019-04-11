@@ -11,12 +11,17 @@ import shuup.apps
 class AppConfig(shuup.apps.AppConfig):
     name = __name__
     provides = {
+        "admin_shop_form_part": [
+            "shuup_wishlist.configuration.WishlistSettingsFormPart",
+        ],
         "xtheme_plugin": [
             __name__ + ".plugins:WishlistPlugin",
             __name__ + ".plugins:WishlistSmallButtonPlugin",
+            __name__ + ".plugins:WishlistFavoritesButtonPlugin",
         ],
         "customer_dashboard_items": [
             __name__ + '.dashboard_items:WishlistItem',
+            __name__ + '.dashboard_items:FavoritesItem'
         ],
         "xtheme_resource_injection": [__name__ + ".plugins:add_resources"],
         "front_urls": [

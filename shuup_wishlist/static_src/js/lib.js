@@ -120,23 +120,23 @@ window.ShuupWishlist = {
                 var msg = "";
                 if (action === "add") {
                     if (response.created) {
-                        msg = interpolate(gettext("%s added to wishlist!"), [response.product_name]);
+                        msg = interpolate(gettext("%s added successfully!"), [response.product_name]);
                         that.flashMessage("success", msg, "");
                     } else if (response.err) {
                         that.showCreateWishlistModal(shopProductId);
                     } else {
-                        msg = interpolate(gettext("%s is already in wishlist!"), [response.product_name]);
+                        msg = interpolate(gettext("%s is already in list!"), [response.product_name]);
                         that.flashMessage("danger", msg, "");
                     }
                 }
                 else {
                     if (response.removed) {
-                        that.flashMessage("success", gettext("Product removed from wishlist!"), "");
+                        that.flashMessage("success", gettext("Item removed from list!"), "");
                         if (hideElement) {
                             hideElement.hide();
                         }
                     } else {
-                        that.flashMessage("danger", gettext("Error removing product from wishlist. Try again later."), "");
+                        that.flashMessage("danger", gettext("Error removing item from list. Try again later."), "");
                     }
                 }
             },

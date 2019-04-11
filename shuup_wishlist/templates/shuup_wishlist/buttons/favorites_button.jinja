@@ -1,0 +1,13 @@
+{% if request.customer %}
+<div>
+    <a
+        type="button"
+        href="#"
+        class="add-to-wishlist"
+        data-shop-product-id="{{ shop_product.id }}"
+        data-wishlist-id="{{ wishlist_id }}"
+        title="{% trans %}Add to favorites{% endtrans %}">
+        <i class="fa fa-heart"></i>{% if show_text %} {% trans %}Add to favorites{% endtrans %}{% endif %}
+    </a>
+</div>
+{% endif %}
