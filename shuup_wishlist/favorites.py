@@ -11,5 +11,7 @@ from shuup_wishlist.models import Wishlist
 
 
 def get_favorites_list(shop, customer):
+    if not (customer and shop):
+        return
     return Wishlist.objects.get_or_create(
         shop=shop, customer=customer, name=_("Favorites"))[0]

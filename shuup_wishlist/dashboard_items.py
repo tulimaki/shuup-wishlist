@@ -52,4 +52,6 @@ class FavoritesItem(DashboardItem):
     def url(self):
         shop = self.request.shop
         customer = self.request.customer
-        return reverse("shuup:wishlist_detail", kwargs={"pk": get_favorites_list(shop, customer).pk})
+        favorites_list = get_favorites_list(shop, customer)
+        if favorites_list:
+            return reverse("shuup:wishlist_detail", kwargs={"pk": favorites_list.pk})
