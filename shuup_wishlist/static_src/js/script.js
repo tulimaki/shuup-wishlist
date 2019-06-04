@@ -8,26 +8,27 @@
  */
 // make sure jQuery is available
 if (typeof window.$ === "function") {
-    $(document).ready(function() {
-        function getProductIdToAdd(el) {
-            var elProductId = $(el).attr("data-shop-product-id");
-            var shopProductId = null;
-            var addToCartButton = $("#add-to-cart-button-" + elProductId);
-            $.each(addToCartButton.closest("form.add-to-basket").serializeArray(), function(i, fd) {
-                if (fd.name === "shop_product_id") {
-                    shopProductId = fd.value;
-                }
-            });
-            return (shopProductId ? shopProductId : elProductId);
-        }
+    // eslint-disable-next-line no-inner-declarations
+    function getProductIdToAdd(el) {
+        var elProductId = $(el).attr("data-shop-product-id");
+        var shopProductId = null;
+        var addToCartButton = $("#add-to-cart-button-" + elProductId);
+        $.each(addToCartButton.closest("form.add-to-basket").serializeArray(), function(i, fd) {
+            if (fd.name === "shop_product_id") {
+                shopProductId = fd.value;
+            }
+        });
+        return (shopProductId ? shopProductId : elProductId);
+    }
 
-        $(".create-wishlist").click(function(e) {
+    window.initializeWishlist = function () {
+        $(".create-wishlist").off("click").on("click", function(e) {
             e.preventDefault();
             var shopProductId = getProductIdToAdd(this);
             window.ShuupWishlist.showCreateWishlistModal(shopProductId);
         });
 
-        $(".add-to-wishlist").click(function(e){
+        $(".add-to-wishlist").off("click").on("click", function(e){
             e.preventDefault();
             var urlOverride = $(this).data("url-override");
             if (urlOverride && urlOverride !== null && urlOverride.length) {
@@ -36,18 +37,21 @@ if (typeof window.$ === "function") {
             }
             // if we have wishlists, add the item to the first one
             // otherwise show the create wishlist modal
-            var shopProductId = getProductIdToAdd(this);
-            var items = $(".add-to-wishlist-dropdown li a");
-            if(items.length > 1){
-                var wishlistId = $(items[0]).attr("data-wishlist-id");
-                window.ShuupWishlist.addProduct(wishlistId, shopProductId);
+            const shopProductId = getProductIdToAdd(this);
+            let wishlistId = $(this).data("wishlist-id");
+            if (!wishlistId) {
+                const items = $(this).parent().siblings(".add-to-wishlist-dropdown").find("li a");
+                if (items.length > 1) {
+                    wishlistId = $(items[0]).attr("data-wishlist-id");
+                }
             }
-            else {
+            if (wishlistId) {
+                window.ShuupWishlist.addProduct(wishlistId, shopProductId);
+            } else {
                 window.ShuupWishlist.addProduct("default", shopProductId);
             }
         });
-
-        $(".remove-from-wishlist").on("click", function(e) {
+        $(".remove-from-wishlist").off("click").on("click", function(e) {
             e.preventDefault();
             var shopProductId = getProductIdToAdd(this);
             var wishlistId = $(this).data("wishlist-id");
@@ -55,7 +59,7 @@ if (typeof window.$ === "function") {
             window.ShuupWishlist.removeProduct(wishlistId, shopProductId, rowToHide);
         });
         // need to use delegated event since items can be added to list dynamically
-        $(".add-to-wishlist-dropdown").on("click", "a", function(e) {
+        $(".add-to-wishlist-dropdown").off("click", "a").on("click", "a", function(e) {
             if ($(this).hasClass("create-wishlist")) {
                 return;
             }
@@ -64,5 +68,8 @@ if (typeof window.$ === "function") {
             var wishlistId = $(this).attr("data-wishlist-id") || "default";
             window.ShuupWishlist.addProduct(wishlistId, shopProductId);
         });
+    };
+    $(document).ready(function() {
+        window.initializeWishlist();
     });
 }
