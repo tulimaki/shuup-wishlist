@@ -52,7 +52,7 @@
         <table class="table">
             <tbody>
                 {% for shop_product in customer_wishlist.products.all() %}
-                    {% if shop_product.is_visible(request.customer) %}
+                    {% set is_visible = shop_product.is_visible(request.customer) %}
                     {% set image = shop_product.product.primary_image %}
                     {% if not image and shop_product.product.variation_parent %}
                         {% set image = shop_product.product.variation_parent.primary_image %}
@@ -64,18 +64,24 @@
                                                     shop_product_pk=shop_product.pk)%}
                     <tr>
                         <td class="wishlist-product-image">
-                            <div style="background-image:url('{% if thumbnail %}{{ thumbnail }}{% else %}{{ STATIC_URL }}shuup_wishlist/img/no_image.png{% endif %}')"></div>
+                            <div style="background-image:url('{% if thumbnail and is_visible %}{{ thumbnail }}{% else %}{{ static('shuup/front/img/no_image.png') }}{% endif %}')"></div>
                         </td>
                         <td>
-                            <h2>{{ shop_product.get_name() }}</h2>
-                            <p>{{ shop_product.get_name()|safe }}</p>
+                            {% if is_visible %}
+                                <h2>{{ shop_product.get_name() }}</h2>
+                                <p>{{ shop_product.get_name()|safe }}</p>
+                            {% else %}
+                                <h2>{{ _("Product not available") }}</h2>
+                            {% endif %}
                         </td>
                         <td class="text-right">
                             <div class="btn-vertical">
+                                {% if is_visible %}
                                 <a href="{{ product_url }}" class="btn btn-primary">
                                     <i class="fa fa-search"></i>
                                     {% trans %}View{% endtrans %}
                                 </a>
+                                {% endif %}
                                 {% if is_owner %}
                                     <form method="POST"
                                           action="{{ remove_product_url }}">
@@ -92,7 +98,6 @@
                             </div>
                         </td>
                     </tr>
-                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
