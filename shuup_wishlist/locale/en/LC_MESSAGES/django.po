@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-16 20:47+0000\n"
+"POT-Creation-Date: 2019-04-11 21:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Wishlist Settings"
+msgstr ""
+
+msgid "Show wishlists on dashboard"
+msgstr ""
+
+msgid "Setting this to false will hide wishlists from customer dashboard."
+msgstr ""
+
+msgid "Show favorites wishlist on dashboard"
+msgstr ""
+
+msgid ""
+"Combined with Wishlist Favorites Button plugin show favorites wishlist at "
+"dashboard."
+msgstr ""
+
 msgid "Wishlists"
 msgstr ""
 
 msgid "Show all"
+msgstr ""
+
+msgid "Favorites"
 msgstr ""
 
 msgid "Invalid shop product."
@@ -68,6 +88,12 @@ msgstr ""
 msgid "Show text next to icon"
 msgstr ""
 
+msgid "Wishlist Favorites Button"
+msgstr ""
+
+msgid "Add to favorites"
+msgstr ""
+
 msgid "Add to wishlist"
 msgstr ""
 
@@ -83,7 +109,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-msgid "Delete Wishlist"
+msgid "Delete"
 msgstr ""
 
 msgid "Share: "
@@ -92,13 +118,13 @@ msgstr ""
 msgid "Check out my wishlist"
 msgstr ""
 
-msgid "View Product"
+msgid "View"
 msgstr ""
 
 msgid "Remove"
 msgstr ""
 
-msgid "No products found."
+msgid "This list is empty."
 msgstr ""
 
 msgid "Dashboard"

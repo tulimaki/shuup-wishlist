@@ -9,11 +9,12 @@
 import json
 
 import pytest
+from django.core.urlresolvers import reverse
 from django.db.models import ObjectDoesNotExist
 from django.http import Http404
 from django.utils.translation import activate
 
-from shuup.core.models import get_person_contact, ShopProduct
+from shuup.core.models import get_person_contact
 from shuup.testing.factories import (
     create_product, get_default_product, get_default_shop,
     get_default_supplier, get_shop
@@ -75,8 +76,8 @@ def test_wishlist_create_with_product(admin_user, rf):
 
     person = get_person_contact(admin_user)
 
-    product1_s1 = create_product("p1_s1", shop1, get_default_supplier())
-    product1_s2 = create_product("p1_s2", shop2, get_default_supplier())
+    create_product("p1_s1", shop1, get_default_supplier())
+    create_product("p1_s2", shop2, get_default_supplier())
     product2_s1 = create_product("p2_s1", shop1, get_default_supplier())
     product2_s2 = create_product("p2_s2", shop2, get_default_supplier())
 
@@ -205,6 +206,7 @@ def test_view_own_wishlist_detail(rf, regular_user):
     assert response.context_data['customer_wishlist'].name == wishlist.name
     assert response.context_data['customer_wishlist'].products.count() == 1
 
+
 @pytest.mark.parametrize("is_anonymous", [
     True, False
 ])
@@ -219,11 +221,13 @@ def test_view_shared_wishlist_detail(rf, admin_user, regular_user, is_anonymous)
     wishlist = Wishlist.objects.create(shop=shop, customer=admin_person, name='foo', privacy=WishlistPrivacy.SHARED)
     wishlist.products.add(shop_product)
     view_func = WishlistCustomerDetailView.as_view()
-    
+
     if(is_anonymous):
         request = apply_request_middleware(rf.get("/"))
-        with pytest.raises(Http404):
-            view_func(request, pk=wishlist.pk)
+        assert request.customer.pk is None
+        response = view_func(request, pk=wishlist.pk)
+        assert response.status_code == 302
+        assert response.url.endswith(reverse('shuup:index'))
     else:
         request = apply_request_middleware(rf.get("/"), user=regular_person.user)
         response = view_func(request, pk=wishlist.pk)
@@ -269,6 +273,7 @@ def test_delete_own_wishlist(rf, regular_user):
     assert response.status_code == 302
     with pytest.raises(Wishlist.DoesNotExist):
         Wishlist.objects.get(pk=wishlist.pk)
+
 
 @pytest.mark.django_db
 def test_delete_other_persons_wishlist(rf, admin_user, regular_user):
