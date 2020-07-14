@@ -9,7 +9,7 @@
 // make sure jQuery is available
 if (typeof window.$ === "function") {
     // eslint-disable-next-line no-inner-declarations
-    function getProductIdToAdd(el) {
+    window.getProductIdToAdd = function getProductIdToAdd(el) {
         var elProductId = $(el).attr("data-shop-product-id");
         var shopProductId = null;
         var addToCartButton = $("#add-to-cart-button-" + elProductId);
@@ -24,7 +24,7 @@ if (typeof window.$ === "function") {
     window.initializeWishlist = function () {
         $(".create-wishlist").off("click").on("click", function(e) {
             e.preventDefault();
-            var shopProductId = getProductIdToAdd(this);
+            var shopProductId = window.getProductIdToAdd(this);
             window.ShuupWishlist.showCreateWishlistModal(shopProductId);
         });
 
@@ -35,9 +35,13 @@ if (typeof window.$ === "function") {
                 window.location = urlOverride;
                 return;
             }
+
             // if we have wishlists, add the item to the first one
             // otherwise show the create wishlist modal
-            const shopProductId = getProductIdToAdd(this);
+            const shopProductId = window.getProductIdToAdd(this);
+            window.ShuupWishlist.showSelectWishlistModal(shopProductId);
+
+            /*
             let wishlistId = $(this).data("wishlist-id");
             if (!wishlistId) {
                 const items = $(this).parent().siblings(".add-to-wishlist-dropdown").find("li a");
@@ -49,11 +53,11 @@ if (typeof window.$ === "function") {
                 window.ShuupWishlist.addProduct(wishlistId, shopProductId);
             } else {
                 window.ShuupWishlist.addProduct("default", shopProductId);
-            }
+            }*/
         });
         $(".remove-from-wishlist").off("click").on("click", function(e) {
             e.preventDefault();
-            var shopProductId = getProductIdToAdd(this);
+            var shopProductId = window.getProductIdToAdd(this);
             var wishlistId = $(this).data("wishlist-id");
             var rowToHide = $(this).parents("tr");
             window.ShuupWishlist.removeProduct(wishlistId, shopProductId, rowToHide);
@@ -64,7 +68,7 @@ if (typeof window.$ === "function") {
                 return;
             }
             e.preventDefault();
-            var shopProductId = getProductIdToAdd(this);
+            var shopProductId = window.getProductIdToAdd(this);
             var wishlistId = $(this).attr("data-wishlist-id") || "default";
             window.ShuupWishlist.addProduct(wishlistId, shopProductId);
         });
