@@ -12,6 +12,7 @@ from django.db.models import Count, Q
 from django.http import Http404
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.generic.list import ListView
@@ -105,6 +106,19 @@ class WishlistCreateView(CreateView):
         data = super(WishlistCreateView, self).get_context_data(**kwargs)
         data['shop_product_id'] = self.request.GET.get('shop_product_id')
         return data
+
+
+class WishlistSelectView(TemplateView):
+    template_name = 'shuup_wishlist/select_wishlist_modal.jinja'
+
+    def get_context_data(self, **kwargs):
+        context = super(WishlistSelectView, self).get_context_data(**kwargs)
+        context['shop_product_id'] = self.request.GET.get('shop_product_id')
+        context["wishlists"] = Wishlist.objects.filter(
+            shop=self.request.shop,
+            customer=self.request.customer
+        )
+        return context
 
 
 class WishlistDeleteView(DeleteView):

@@ -1,0 +1,30 @@
+<div id="select-wishlist-modal" class="fade modal" tabindex="-1" role="dialog" aria-labelledby="select-wishlist-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">{% trans %}Select Wishlist{% endtrans %}</h4>
+            </div>
+            <div class="modal-body">
+                {%  if wishlists %}
+                    <div class="row">
+                        <select class="select-wishlist selectpicker" data-shop-product-id="{{ shop_product_id }}">
+                            <option value="">-----</option>
+                            {% for wishlist in wishlists %}
+                                <option value="{{ wishlist.id }}">{{ wishlist.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+                <br>
+                <div class="row">
+                    <a class="btn btn-default create-wishlist" href="{{ url('shuup:create_wishlist') }}" data-shop-product-id="{{ shop_product_id }}">
+                        {% trans %}Create new wishlist{% endtrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
