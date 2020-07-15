@@ -1,6 +1,0 @@
-shuup
-coveralls
-pytest>=3.6
-pytest-cov
-pytest-django>=3.3.2
--e .
