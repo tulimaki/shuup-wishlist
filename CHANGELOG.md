@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Enter here all the changes made to the development version
 
+## [0.4.11] - 2020-07-14
+
 ### Added
 
 - Add ability to select the wishlist from the heart, small, and favorites buttons
