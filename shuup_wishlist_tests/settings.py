@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     "shuup.core",
     "shuup.front",
     "shuup.admin",
+    "shuup.notify",
     "shuup.testing",
     "shuup.campaigns",
     "shuup.customer_group_pricing",
