@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=50, verbose_name='name')),
                 ('privacy', enumfields.fields.EnumIntegerField(default=2, enum=shuup_wishlist.models.WishlistPrivacy, verbose_name='privacy')),
                 ('created_on', models.DateTimeField(auto_now_add=True, verbose_name='created on')),
-                ('customer', models.ForeignKey(verbose_name='customer', to='shuup.Contact')),
+                ('customer', models.ForeignKey(on_delete=models.deletion.CASCADE, verbose_name='customer', to='shuup.Contact')),
                 ('products', models.ManyToManyField(related_name='wishlists', verbose_name='products', to='shuup.Product')),
-                ('shop', models.ForeignKey(verbose_name='shop', to='shuup.Shop')),
+                ('shop', models.ForeignKey(on_delete=models.deletion.CASCADE, verbose_name='shop', to='shuup.Shop')),
             ],
             options={
                 'verbose_name': 'Wishlist',

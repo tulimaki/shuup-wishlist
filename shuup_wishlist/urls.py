@@ -9,9 +9,9 @@ from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
 from .views import (
-    add_product_to_wishlist, WishlistCreateView,
-    WishlistCustomerDetailView, WishlistCustomerView, WishlistDeleteView,
-    WishlistProductDeleteView, WishlistSearchView, WishlistSelectView
+    add_product_to_wishlist, WishlistCreateView, WishlistCustomerDetailView,
+    WishlistCustomerView, WishlistDeleteView, WishlistProductDeleteView,
+    WishlistSearchView, WishlistSelectView
 )
 
 urlpatterns = [

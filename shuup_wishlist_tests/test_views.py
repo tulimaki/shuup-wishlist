@@ -8,9 +8,9 @@
 import json
 
 import pytest
-from django.core.urlresolvers import reverse
 from django.db.models import ObjectDoesNotExist
 from django.http import Http404
+from django.urls import reverse
 from django.utils.translation import activate
 
 from shuup.core.models import get_person_contact

@@ -6,11 +6,11 @@
 # This source code is licensed under the OSL-3.0 license found in the
 # LICENSE file in the root directory of this source tree.
 from django.contrib import messages
-from django.core.urlresolvers import reverse_lazy
 from django.db import transaction
 from django.db.models import Count, Q
 from django.http import Http404
 from django.http.response import HttpResponseRedirect, JsonResponse
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -57,7 +57,7 @@ class WishlistCustomerDetailView(DashboardViewMixin, DetailView):
 
     def get_queryset(self):
         qs = super(WishlistCustomerDetailView, self).get_queryset().filter(shop=self.request.shop)
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             qs = qs.filter(
                 Q(customer=self.request.customer) | Q(privacy=WishlistPrivacy.SHARED) |
                 Q(privacy=WishlistPrivacy.PUBLIC)).distinct()
